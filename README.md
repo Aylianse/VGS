@@ -44,6 +44,22 @@ Open [http://localhost:3000](http://localhost:3000). Admin: [http://localhost:30
 | `npm run db:seed` | Seed admin, 6 products, blog, testimonials |
 | `npm run db:studio` | Prisma Studio |
 
+## Deploy (Hostinger VPS)
+
+Production deploy uses Node + PM2 + nginx + Let's Encrypt on a Hostinger VPS, with Neon Postgres.
+
+**Full runbook:** [deploy/setup-vps.md](deploy/setup-vps.md)
+
+Quick summary:
+
+1. SSH into the VPS, install Node 22, nginx, PM2, Certbot
+2. Clone repo to `/var/www/vitaglow`
+3. Copy `.env.example` → `.env` and set `DATABASE_URL`, `JWT_SECRET`, `NEXT_PUBLIC_SITE_URL`, admin credentials
+4. `npm ci && npx prisma db push && npm run db:seed && npm run build`
+5. `npm run pm2:start && pm2 save && pm2 startup`
+6. Configure nginx ([deploy/nginx-vitaglow.conf](deploy/nginx-vitaglow.conf)) and run Certbot for SSL
+7. Future updates: `bash deploy/deploy.sh` on the server
+
 ## Notes
 
 - No cart/checkout in v1 — conversion is WhatsApp / Call / Contact.
