@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" fill="none">
+  <rect width="800" height="800" fill="#FAF6F2"/>
+  <circle cx="400" cy="360" r="180" fill="#B8956C" fill-opacity="0.35"/>
+  <rect x="280" y="280" width="240" height="320" rx="40" fill="#B8956C"/>
+  <rect x="310" y="250" width="180" height="50" rx="16" fill="#9E3D5C"/>
+  <text x="400" y="700" text-anchor="middle" font-family="Georgia, serif" font-size="36" fill="#2A1F1C">Capsules</text>
+</svg>

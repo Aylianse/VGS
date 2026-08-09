@@ -1,0 +1,66 @@
+import type { Metadata } from "next";
+import { Cormorant_Garamond, Outfit } from "next/font/google";
+import { Toaster } from "sonner";
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
+import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+import { SITE } from "@/lib/site";
+import "./globals.css";
+
+const display = Cormorant_Garamond({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const body = Outfit({
+  variable: "--font-body",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE.url),
+  title: {
+    default: `${SITE.name} Night Cream For Skin Whitening — Official Website`,
+    template: `%s | ${SITE.name}`,
+  },
+  description: SITE.description,
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE.url,
+    siteName: SITE.legalName,
+    title: SITE.legalName,
+    description: SITE.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE.legalName,
+    description: SITE.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className={`${display.variable} ${body.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col bg-background text-foreground">
+        <OrganizationJsonLd />
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+        <WhatsAppButton />
+        <Toaster position="top-center" richColors />
+      </body>
+    </html>
+  );
+}

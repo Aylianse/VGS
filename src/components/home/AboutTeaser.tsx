@@ -1,0 +1,32 @@
+import Link from "next/link";
+import { ABOUT_CONTENT } from "@/lib/site";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+export function AboutTeaser() {
+  return (
+    <section className="border-y border-border bg-cream/60">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-20 lg:grid-cols-2 lg:items-center">
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">VitaGlow</p>
+          <h2 className="mt-3 font-display text-4xl text-ink sm:text-5xl">
+            {ABOUT_CONTENT.title}
+          </h2>
+          <p className="mt-5 text-lg leading-relaxed text-muted">{ABOUT_CONTENT.intro}</p>
+          <Link href="/about" className={cn(buttonVariants({ size: "lg" }), "mt-8")}>
+            Read more
+          </Link>
+        </div>
+        <div className="rounded-[2rem] bg-gradient-to-br from-blush/80 via-white to-gold/20 p-8 shadow-inner">
+          <ul className="space-y-5 text-sm leading-relaxed text-ink/80">
+            {ABOUT_CONTENT.body.map((para) => (
+              <li key={para.slice(0, 24)} className="border-l-2 border-rose/40 pl-4">
+                {para}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}

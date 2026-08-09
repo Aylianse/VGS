@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("admin_users")
+}
+
+model Product {
+  id                 String             @id @default(cuid())
+  name               String
+  slug               String             @unique
+  description        String
+  usageInstructions  String             @default("")
+  imageUrls          String[]
+  metaTitle          String?
+  metaDescription    String?
+  sortOrder          Int                @default(0)
+  published          Boolean            @default(true)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  verificationCodes  VerificationCode[]
+
+  @@index([published, sortOrder])
+  @@map("products")
+}
+
+model VerificationCode {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  customerName    String?
+  productId       String?
+  maxValidations  Int      @default(3)
+  validationCount Int      @default(0)
+  status          String   @default("Active")
+  createdAt       DateTime @default(now())
+  product         Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([code])
+  @@index([productId])
+  @@map("verification_codes")
+}
+
+model BlogPost {
+  id              String    @id @default(cuid())
+  title           String
+  slug            String    @unique
+  excerpt         String
+  body            String
+  coverImageUrl   String?
+  metaTitle       String?
+  metaDescription String?
+  publishedAt     DateTime  @default(now())
+  published       Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([published, publishedAt])
+  @@map("blog_posts")
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  author    String
+  body      String
+  sortOrder Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, sortOrder])
+  @@map("testimonials")
+}
