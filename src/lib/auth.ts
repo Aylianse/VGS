@@ -6,6 +6,20 @@ import { prisma } from "./prisma";
 
 export { AUTH_COOKIE };
 
+export function authCookieOptions() {
+  const secure =
+    process.env.NODE_ENV === "production" &&
+    (process.env.NEXT_PUBLIC_SITE_URL?.startsWith("https://") ?? false);
+
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    secure,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  };
+}
+
 function getSecret() {
   const secret = process.env.JWT_SECRET;
   if (!secret) throw new Error("JWT_SECRET is not configured");

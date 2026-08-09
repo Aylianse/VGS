@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
   AUTH_COOKIE,
+  authCookieOptions,
   createAdminToken,
   hashPassword,
   requireAdmin,
@@ -13,6 +14,13 @@ import {
 import { generateVerificationCode } from "@/lib/codes";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
+
+export async function loginFormAction(
+  _prevState: { error: string } | undefined,
+  formData: FormData,
+): Promise<{ error: string } | undefined> {
+  return loginAction(formData);
+}
 
 export async function loginAction(formData: FormData): Promise<{ error: string } | void> {
   const email = String(formData.get("email") || "")
@@ -31,13 +39,7 @@ export async function loginAction(formData: FormData): Promise<{ error: string }
 
   const token = await createAdminToken({ id: user.id, email: user.email });
   const cookieStore = await cookies();
-  cookieStore.set(AUTH_COOKIE, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7,
-  });
+  cookieStore.set(AUTH_COOKIE, token, authCookieOptions());
 
   redirect("/admin");
 }
