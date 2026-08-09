@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.md
+deploy/setup-vps.md
+.DS_Store
+tsconfig.tsbuildinfo
+coverage
+.cursor

@@ -1,0 +1,59 @@
+# Vita Glow — Docker Compose for Hostinger VPS
+#
+# Database: uses Neon Postgres (external). No Postgres container included.
+#
+# Quick start on the VPS:
+#   1. Clone repo and cd into it
+#   2. cp .env.example .env   (fill in Neon URL, JWT_SECRET, domain, etc.)
+#   3. docker compose up -d --build
+#   4. First time only — sync schema and seed (from your laptop against Neon, or on VPS with Node):
+#        npm run db:push && npm run db:seed
+#   5. Point nginx (host or container) at port 3000 and add SSL with Certbot
+#
+# Updates:
+#   git pull && docker compose up -d --build
+
+services:
+  vitaglow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://vitaglowproducts.com}
+        NEXT_PUBLIC_EMAIL: ${NEXT_PUBLIC_EMAIL:-}
+        NEXT_PUBLIC_PHONE: ${NEXT_PUBLIC_PHONE:-}
+        NEXT_PUBLIC_PHONE_DISPLAY: ${NEXT_PUBLIC_PHONE_DISPLAY:-}
+        NEXT_PUBLIC_WHATSAPP: ${NEXT_PUBLIC_WHATSAPP:-}
+        NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY: ${NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY:-}
+    container_name: vitaglow
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+    volumes:
+      - vitaglow_uploads:/app/public/uploads
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: vitaglow-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/nginx-docker.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      vitaglow:
+        condition: service_healthy
+
+volumes:
+  vitaglow_uploads:

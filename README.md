@@ -60,6 +60,17 @@ Quick summary:
 6. Configure nginx ([deploy/nginx-vitaglow.conf](deploy/nginx-vitaglow.conf)) and run Certbot for SSL
 7. Future updates: `bash deploy/deploy.sh` on the server
 
+### Docker (alternative)
+
+Use [docker-compose.yml](docker-compose.yml) on the VPS instead of PM2:
+
+```bash
+cp .env.example .env   # fill in values
+docker compose up -d --build
+```
+
+See comments in `docker-compose.yml` for first-time DB setup. nginx is included on port 80; add SSL via Certbot on the host or Hostinger panel.
+
 ## Notes
 
 - No cart/checkout in v1 — conversion is WhatsApp / Call / Contact.
