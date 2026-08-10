@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   description: "Skincare tips, product reviews, and Vita Glow brand stories.",
 };
 
+
 export const dynamic = "force-dynamic";
 
 export default async function BlogPage() {
