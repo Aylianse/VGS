@@ -87,5 +87,6 @@ See comments in `docker-compose.yml` for first-time DB setup. nginx is included 
 ## Notes
 
 - No cart/checkout in v1 — conversion is WhatsApp / Call / Contact.
-- Upload images via admin API to `public/uploads` (or paste image URLs).
+- Upload images in Admin (Products / Blog tabs) — saved to `/var/www/vitaglow/uploads/` on the VPS.
+- Or paste an image URL manually. Setup: [deploy/setup-uploads.sh](deploy/setup-uploads.sh).
 - Set `NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY` for the contact form.

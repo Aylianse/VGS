@@ -57,6 +57,7 @@ mkdir -p /var/www
 cd /var/www
 git clone https://github.com/YOUR_USER/VGS.git vitaglow
 cd vitaglow
+sudo bash deploy/setup-uploads.sh
 ```
 
 Replace the GitHub URL with your actual repo.

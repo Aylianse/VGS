@@ -11,6 +11,7 @@ import {
   saveTestimonialAction,
 } from "@/lib/actions/admin";
 import { CodesAdmin } from "@/components/admin/CodesAdmin";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 
@@ -126,10 +127,12 @@ export function AdminDashboard({
               <Label htmlFor="usageInstructions">Usage instructions</Label>
               <Textarea id="usageInstructions" name="usageInstructions" />
             </div>
-            <div>
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input id="imageUrl" name="imageUrl" placeholder="/products/night-cream.svg" />
-            </div>
+            <ImageUploadField
+              name="imageUrl"
+              label="Product image"
+              folder="products"
+              placeholder="/uploads/products/your-image.jpg"
+            />
             <div>
               <Label htmlFor="metaTitle">SEO title</Label>
               <Input id="metaTitle" name="metaTitle" />
@@ -184,7 +187,12 @@ export function AdminDashboard({
             <Input name="slug" placeholder="Slug (optional)" />
             <Textarea name="excerpt" placeholder="Excerpt" required />
             <Textarea name="body" placeholder="Body" required className="min-h-40" />
-            <Input name="coverImageUrl" placeholder="Cover image URL" />
+            <ImageUploadField
+              name="coverImageUrl"
+              label="Cover image"
+              folder="blog"
+              placeholder="/uploads/blog/your-cover.jpg"
+            />
             <Input name="metaTitle" placeholder="SEO title" />
             <Textarea name="metaDescription" placeholder="SEO description" />
             <label className="flex items-center gap-2 text-sm">

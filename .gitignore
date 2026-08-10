@@ -43,6 +43,6 @@ next-env.d.ts
 /prisma/*.db
 /prisma/*.db-journal
 
-# uploads
-/public/uploads/*
-!/public/uploads/.gitkeep
+# uploads (dynamic images — stored on VPS in production)
+/public/uploads/**/*
+!/public/uploads/**/.gitkeep

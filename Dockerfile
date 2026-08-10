@@ -48,7 +48,8 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
-RUN mkdir -p public/uploads && chown -R nextjs:nodejs public/uploads
+RUN mkdir -p public/uploads/products public/uploads/blog public/uploads/general \
+  && chown -R nextjs:nodejs public/uploads
 
 USER nextjs
 EXPOSE 3000

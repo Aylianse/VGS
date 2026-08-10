@@ -42,3 +42,24 @@ GitHub → **Actions → Deploy to Hostinger VPS → Run workflow**
 - Never commit API keys or `.env` to the repo
 - Rotate `HOSTINGER_API_KEY` if it was ever exposed
 - App env vars are injected at deploy time via `environment-variables` in the workflow
+
+## Dynamic images folder
+
+On the VPS, create the persistent uploads folder **once** (SSH in):
+
+```bash
+sudo bash deploy/setup-uploads.sh
+```
+
+This creates:
+
+```
+/var/www/vitaglow/uploads/
+├── products/   → product images
+├── blog/       → blog cover images
+└── general/    → other uploads
+```
+
+Images uploaded in Admin are saved here and served at `/uploads/products/...`, etc. They survive redeploys because `docker-compose.yml` mounts this folder into the container.
+
+You can also upload files directly via SFTP/File Manager into those folders.

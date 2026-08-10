@@ -35,7 +35,8 @@ services:
       NODE_ENV: production
       PORT: 3000
     volumes:
-      - vitaglow_uploads:/app/public/uploads
+      # Persistent images on the VPS — survives redeploys
+      - /var/www/vitaglow/uploads:/app/public/uploads
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
       interval: 30s
@@ -55,5 +56,4 @@ services:
       vitaglow:
         condition: service_healthy
 
-volumes:
-  vitaglow_uploads:
+# uploads are stored on the host at /var/www/vitaglow/uploads (see deploy/setup-uploads.sh)
