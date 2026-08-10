@@ -12,19 +12,15 @@ import {
   saveTestimonialAction,
   type ActionResult,
 } from "@/lib/actions/admin";
+import { ADMIN_TABS, type AdminTabId } from "@/lib/admin-tabs";
 import { CodesAdmin } from "@/components/admin/CodesAdmin";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 
-const TABS = [
-  { id: "products", label: "Products" },
-  { id: "codes", label: "Codes" },
-  { id: "blog", label: "Blog" },
-  { id: "testimonials", label: "Testimonials" },
-] as const;
+const TABS = ADMIN_TABS;
 
-type TabId = (typeof TABS)[number]["id"];
+type TabId = AdminTabId;
 
 type Product = {
   id: string;
@@ -52,10 +48,6 @@ type AdminDashboardProps = {
   testimonials: Testimonial[];
   unusedCount: number;
 };
-
-function isTabId(value: string): value is TabId {
-  return TABS.some((tab) => tab.id === value);
-}
 
 function runAction(
   action: (formData: FormData) => Promise<ActionResult>,
@@ -313,9 +305,4 @@ export function AdminDashboard({
       )}
     </div>
   );
-}
-
-export function resolveAdminTab(tab?: string): TabId {
-  if (tab && isTabId(tab)) return tab;
-  return "products";
 }

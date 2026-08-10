@@ -8,7 +8,9 @@ export const SITE = {
   phone: process.env.NEXT_PUBLIC_PHONE || "+971562717889",
   phoneDisplay: process.env.NEXT_PUBLIC_PHONE_DISPLAY || "+971 56 271 7889",
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "971562717889",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
   copyright: "Vita Glow Products",
 } as const;
 
