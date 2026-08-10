@@ -60,6 +60,19 @@ Quick summary:
 6. Configure nginx ([deploy/nginx-vitaglow.conf](deploy/nginx-vitaglow.conf)) and run Certbot for SSL
 7. Future updates: `bash deploy/deploy.sh` on the server
 
+### Auto-deploy (Hostinger GitHub Action — recommended)
+
+Push to `main` deploys via Docker using Hostinger's official action.
+
+Setup: [deploy/hostinger-action.md](deploy/hostinger-action.md)
+
+GitHub **secrets:** `HOSTINGER_API_KEY`, `DATABASE_URL`, `JWT_SECRET`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`  
+GitHub **variables:** `HOSTINGER_VM_ID`, `NEXT_PUBLIC_SITE_URL`
+
+### Auto-deploy (VPS cron — no GitHub secrets)
+
+Alternative if you prefer the VPS to pull from your public repo: [deploy/vps-auto-deploy.md](deploy/vps-auto-deploy.md)
+
 ### Docker (alternative)
 
 Use [docker-compose.yml](docker-compose.yml) on the VPS instead of PM2:
