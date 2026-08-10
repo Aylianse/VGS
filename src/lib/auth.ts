@@ -7,9 +7,11 @@ import { prisma } from "./prisma";
 export { AUTH_COOKIE };
 
 export function authCookieOptions() {
+  // Localhost (dev) must never use Secure cookies — browsers drop them on http://
+  // Production: Secure only when the site is served over HTTPS.
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
   const secure =
-    process.env.NODE_ENV === "production" &&
-    (process.env.NEXT_PUBLIC_SITE_URL?.startsWith("https://") ?? false);
+    process.env.NODE_ENV === "production" && siteUrl.startsWith("https://");
 
   return {
     httpOnly: true,
@@ -67,10 +69,14 @@ export async function getAdminSession(): Promise<AdminSession | null> {
 
 export async function requireAdmin() {
   const session = await getAdminSession();
-  if (!session) throw new Error("Unauthorized");
+  if (!session) throw new Error("UNAUTHORIZED");
 
   const user = await prisma.adminUser.findUnique({ where: { id: session.id } });
-  if (!user) throw new Error("Unauthorized");
+  if (!user) throw new Error("UNAUTHORIZED");
 
   return user;
+}
+
+export function isUnauthorized(error: unknown) {
+  return error instanceof Error && error.message === "UNAUTHORIZED";
 }

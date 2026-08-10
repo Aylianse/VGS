@@ -8,6 +8,7 @@ import {
   authCookieOptions,
   createAdminToken,
   hashPassword,
+  isUnauthorized,
   requireAdmin,
   verifyPassword,
 } from "@/lib/auth";
@@ -15,14 +16,12 @@ import { generateVerificationCode } from "@/lib/codes";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
 
-export async function loginFormAction(
-  _prevState: { error: string } | undefined,
-  formData: FormData,
-): Promise<{ error: string } | undefined> {
-  return loginAction(formData);
-}
+export type ActionResult = { error?: string; success?: boolean };
 
-export async function loginAction(formData: FormData): Promise<{ error: string } | void> {
+export async function loginFormAction(
+  _prevState: ActionResult | undefined,
+  formData: FormData,
+): Promise<ActionResult> {
   const email = String(formData.get("email") || "")
     .toLowerCase()
     .trim();
@@ -32,16 +31,23 @@ export async function loginAction(formData: FormData): Promise<{ error: string }
     return { error: "Email and password are required" };
   }
 
-  const user = await prisma.adminUser.findUnique({ where: { email } });
-  if (!user || !(await verifyPassword(password, user.passwordHash))) {
-    return { error: "Invalid login credentials." };
+  try {
+    const user = await prisma.adminUser.findUnique({ where: { email } });
+    if (!user || !(await verifyPassword(password, user.passwordHash))) {
+      return { error: "Invalid login credentials." };
+    }
+
+    const token = await createAdminToken({ id: user.id, email: user.email });
+    const cookieStore = await cookies();
+    cookieStore.set(AUTH_COOKIE, token, authCookieOptions());
+
+    // Do not redirect() here — with useActionState it can surface as
+    // "An unexpected response was received from the server."
+    return { success: true };
+  } catch (error) {
+    console.error("Login error:", error);
+    return { error: "Login failed. Check database connection and JWT_SECRET." };
   }
-
-  const token = await createAdminToken({ id: user.id, email: user.email });
-  const cookieStore = await cookies();
-  cookieStore.set(AUTH_COOKIE, token, authCookieOptions());
-
-  redirect("/admin");
 }
 
 export async function logoutAction() {
@@ -50,224 +56,289 @@ export async function logoutAction() {
   redirect("/admin/login");
 }
 
-export async function saveProductAction(formData: FormData): Promise<void> {
-  await requireAdmin();
+export async function saveProductAction(formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
 
-  const id = String(formData.get("id") || "");
-  const name = String(formData.get("name") || "").trim();
-  const description = String(formData.get("description") || "").trim();
-  const usageInstructions = String(formData.get("usageInstructions") || "").trim();
-  const imageUrl = String(formData.get("imageUrl") || "").trim();
-  const metaTitle = String(formData.get("metaTitle") || "").trim() || null;
-  const metaDescription = String(formData.get("metaDescription") || "").trim() || null;
-  const sortOrder = Number(formData.get("sortOrder") || 0);
-  const published = formData.get("published") === "on";
-  const slug = slugify(String(formData.get("slug") || name));
+    const id = String(formData.get("id") || "");
+    const name = String(formData.get("name") || "").trim();
+    const description = String(formData.get("description") || "").trim();
+    const usageInstructions = String(formData.get("usageInstructions") || "").trim();
+    const imageUrl = String(formData.get("imageUrl") || "").trim();
+    const metaTitle = String(formData.get("metaTitle") || "").trim() || null;
+    const metaDescription = String(formData.get("metaDescription") || "").trim() || null;
+    const sortOrder = Number(formData.get("sortOrder") || 0);
+    const published = formData.get("published") === "on";
+    const slug = slugify(String(formData.get("slug") || name));
 
-  if (!name || !description || !slug) {
-    throw new Error("Name and description are required");
+    if (!name || !description || !slug) {
+      return { error: "Name and description are required" };
+    }
+
+    const data = {
+      name,
+      slug,
+      description,
+      usageInstructions,
+      imageUrls: imageUrl ? [imageUrl] : [],
+      metaTitle,
+      metaDescription,
+      sortOrder,
+      published,
+    };
+
+    if (id) {
+      await prisma.product.update({ where: { id }, data });
+    } else {
+      await prisma.product.create({ data });
+    }
+
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("saveProductAction:", error);
+    return { error: "Could not save product. Check the database connection." };
   }
-
-  const data = {
-    name,
-    slug,
-    description,
-    usageInstructions,
-    imageUrls: imageUrl ? [imageUrl] : [],
-    metaTitle,
-    metaDescription,
-    sortOrder,
-    published,
-  };
-
-  if (id) {
-    await prisma.product.update({ where: { id }, data });
-  } else {
-    await prisma.product.create({ data });
-  }
-
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/admin");
 }
 
-export async function deleteProductAction(formData: FormData): Promise<void> {
-  await requireAdmin();
-  const id = String(formData.get("id") || "");
-  if (!id) throw new Error("Missing id");
-  await prisma.product.delete({ where: { id } });
-  revalidatePath("/");
-  revalidatePath("/products");
-  revalidatePath("/admin");
-}
-
-export async function saveBlogAction(formData: FormData): Promise<void> {
-  await requireAdmin();
-
-  const id = String(formData.get("id") || "");
-  const title = String(formData.get("title") || "").trim();
-  const excerpt = String(formData.get("excerpt") || "").trim();
-  const body = String(formData.get("body") || "").trim();
-  const coverImageUrl = String(formData.get("coverImageUrl") || "").trim() || null;
-  const metaTitle = String(formData.get("metaTitle") || "").trim() || null;
-  const metaDescription = String(formData.get("metaDescription") || "").trim() || null;
-  const published = formData.get("published") === "on";
-  const slug = slugify(String(formData.get("slug") || title));
-
-  if (!title || !excerpt || !body || !slug) {
-    throw new Error("Title, excerpt, and body are required");
+export async function deleteProductAction(formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    const id = String(formData.get("id") || "");
+    if (!id) return { error: "Missing id" };
+    await prisma.product.delete({ where: { id } });
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("deleteProductAction:", error);
+    return { error: "Could not delete product." };
   }
+}
 
-  const data = {
-    title,
-    slug,
-    excerpt,
-    body,
-    coverImageUrl,
-    metaTitle,
-    metaDescription,
-    published,
-  };
+export async function saveBlogAction(formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
 
-  if (id) {
-    await prisma.blogPost.update({ where: { id }, data });
-  } else {
-    await prisma.blogPost.create({ data });
+    const id = String(formData.get("id") || "");
+    const title = String(formData.get("title") || "").trim();
+    const excerpt = String(formData.get("excerpt") || "").trim();
+    const body = String(formData.get("body") || "").trim();
+    const coverImageUrl = String(formData.get("coverImageUrl") || "").trim() || null;
+    const metaTitle = String(formData.get("metaTitle") || "").trim() || null;
+    const metaDescription = String(formData.get("metaDescription") || "").trim() || null;
+    const published = formData.get("published") === "on";
+    const slug = slugify(String(formData.get("slug") || title));
+
+    if (!title || !excerpt || !body || !slug) {
+      return { error: "Title, excerpt, and body are required" };
+    }
+
+    const data = {
+      title,
+      slug,
+      excerpt,
+      body,
+      coverImageUrl,
+      metaTitle,
+      metaDescription,
+      published,
+    };
+
+    if (id) {
+      await prisma.blogPost.update({ where: { id }, data });
+    } else {
+      await prisma.blogPost.create({ data });
+    }
+
+    revalidatePath("/blog");
+    revalidatePath("/");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("saveBlogAction:", error);
+    return { error: "Could not save post. Check the database connection." };
   }
-
-  revalidatePath("/blog");
-  revalidatePath("/");
-  revalidatePath("/admin");
 }
 
-export async function deleteBlogAction(formData: FormData): Promise<void> {
-  await requireAdmin();
-  const id = String(formData.get("id") || "");
-  if (!id) throw new Error("Missing id");
-  await prisma.blogPost.delete({ where: { id } });
-  revalidatePath("/blog");
-  revalidatePath("/admin");
-}
-
-export async function saveTestimonialAction(formData: FormData): Promise<void> {
-  await requireAdmin();
-
-  const id = String(formData.get("id") || "");
-  const author = String(formData.get("author") || "").trim();
-  const body = String(formData.get("body") || "").trim();
-  const sortOrder = Number(formData.get("sortOrder") || 0);
-  const published = formData.get("published") === "on";
-
-  if (!author || !body) throw new Error("Author and body are required");
-
-  const data = { author, body, sortOrder, published };
-
-  if (id) {
-    await prisma.testimonial.update({ where: { id }, data });
-  } else {
-    await prisma.testimonial.create({ data });
+export async function deleteBlogAction(formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    const id = String(formData.get("id") || "");
+    if (!id) return { error: "Missing id" };
+    await prisma.blogPost.delete({ where: { id } });
+    revalidatePath("/blog");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("deleteBlogAction:", error);
+    return { error: "Could not delete post." };
   }
-
-  revalidatePath("/reviews");
-  revalidatePath("/");
-  revalidatePath("/admin");
 }
 
-export async function deleteTestimonialAction(formData: FormData): Promise<void> {
-  await requireAdmin();
-  const id = String(formData.get("id") || "");
-  if (!id) throw new Error("Missing id");
-  await prisma.testimonial.delete({ where: { id } });
-  revalidatePath("/reviews");
-  revalidatePath("/admin");
+export async function saveTestimonialAction(formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const id = String(formData.get("id") || "");
+    const author = String(formData.get("author") || "").trim();
+    const body = String(formData.get("body") || "").trim();
+    const sortOrder = Number(formData.get("sortOrder") || 0);
+    const published = formData.get("published") === "on";
+
+    if (!author || !body) return { error: "Author and body are required" };
+
+    const data = { author, body, sortOrder, published };
+
+    if (id) {
+      await prisma.testimonial.update({ where: { id }, data });
+    } else {
+      await prisma.testimonial.create({ data });
+    }
+
+    revalidatePath("/reviews");
+    revalidatePath("/");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("saveTestimonialAction:", error);
+    return { error: "Could not save testimonial. Check the database connection." };
+  }
+}
+
+export async function deleteTestimonialAction(formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    const id = String(formData.get("id") || "");
+    if (!id) return { error: "Missing id" };
+    await prisma.testimonial.delete({ where: { id } });
+    revalidatePath("/reviews");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("deleteTestimonialAction:", error);
+    return { error: "Could not delete testimonial." };
+  }
 }
 
 export async function generateCodesAction(formData: FormData) {
-  await requireAdmin();
+  try {
+    await requireAdmin();
 
-  const productId = String(formData.get("productId") || "");
-  const customerName = String(formData.get("customerName") || "").trim();
-  const count = Math.max(1, Math.min(20000, Number(formData.get("count") || 1)));
+    const productId = String(formData.get("productId") || "");
+    const customerName = String(formData.get("customerName") || "").trim();
+    const count = Math.max(1, Math.min(20000, Number(formData.get("count") || 1)));
 
-  if (!productId || !customerName) {
-    return { error: "Product and customer name are required" };
+    if (!productId || !customerName) {
+      return { error: "Product and customer name are required" };
+    }
+
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) return { error: "Product not found" };
+
+    const generated: string[] = [];
+    const batchSize = 500;
+
+    while (generated.length < count) {
+      const remaining = count - generated.length;
+      const size = Math.min(batchSize, remaining);
+      const codes = new Set<string>();
+      while (codes.size < size) codes.add(generateVerificationCode());
+
+      const candidates = Array.from(codes);
+      const existing = await prisma.verificationCode.findMany({
+        where: { code: { in: candidates } },
+        select: { code: true },
+      });
+      const existingSet = new Set(existing.map((e) => e.code));
+      const unique = candidates.filter((c) => !existingSet.has(c));
+      if (unique.length === 0) continue;
+
+      await prisma.verificationCode.createMany({
+        data: unique.map((code) => ({
+          code,
+          customerName,
+          productId,
+          maxValidations: 3,
+          validationCount: 0,
+          status: "Active",
+        })),
+        skipDuplicates: true,
+      });
+
+      generated.push(...unique);
+    }
+
+    revalidatePath("/admin");
+    return { success: true, codes: generated.slice(0, count), count: Math.min(generated.length, count) };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("generateCodesAction:", error);
+    return { error: "Could not generate codes. Check the database connection." };
   }
-
-  const product = await prisma.product.findUnique({ where: { id: productId } });
-  if (!product) return { error: "Product not found" };
-
-  const generated: string[] = [];
-  const batchSize = 500;
-
-  while (generated.length < count) {
-    const remaining = count - generated.length;
-    const size = Math.min(batchSize, remaining);
-    const codes = new Set<string>();
-    while (codes.size < size) codes.add(generateVerificationCode());
-
-    const candidates = Array.from(codes);
-    const existing = await prisma.verificationCode.findMany({
-      where: { code: { in: candidates } },
-      select: { code: true },
-    });
-    const existingSet = new Set(existing.map((e) => e.code));
-    const unique = candidates.filter((c) => !existingSet.has(c));
-    if (unique.length === 0) continue;
-
-    await prisma.verificationCode.createMany({
-      data: unique.map((code) => ({
-        code,
-        customerName,
-        productId,
-        maxValidations: 3,
-        validationCount: 0,
-        status: "Active",
-      })),
-      skipDuplicates: true,
-    });
-
-    generated.push(...unique);
-  }
-
-  revalidatePath("/admin");
-  return { success: true, codes: generated.slice(0, count), count: Math.min(generated.length, count) };
 }
 
 export async function searchCodeAction(formData: FormData) {
-  await requireAdmin();
-  const code = String(formData.get("code") || "")
-    .trim()
-    .toUpperCase();
-  if (!code) return { error: "Code is required" };
+  try {
+    await requireAdmin();
+    const code = String(formData.get("code") || "")
+      .trim()
+      .toUpperCase();
+    if (!code) return { error: "Code is required" };
 
-  const result = await prisma.verificationCode.findUnique({
-    where: { code },
-    include: { product: { select: { name: true } } },
-  });
+    const result = await prisma.verificationCode.findUnique({
+      where: { code },
+      include: { product: { select: { name: true } } },
+    });
 
-  if (!result) return { error: "Code not found" };
-  return { result };
+    if (!result) return { error: "Code not found" };
+    return { result };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("searchCodeAction:", error);
+    return { error: "Could not search code." };
+  }
 }
 
 export async function updateCodeStatusAction(formData: FormData) {
-  await requireAdmin();
-  const id = String(formData.get("id") || "");
-  const status = String(formData.get("status") || "");
-  if (!id || (status !== "Active" && status !== "Expired")) {
-    return { error: "Invalid status" };
+  try {
+    await requireAdmin();
+    const id = String(formData.get("id") || "");
+    const status = String(formData.get("status") || "");
+    if (!id || (status !== "Active" && status !== "Expired")) {
+      return { error: "Invalid status" };
+    }
+    await prisma.verificationCode.update({ where: { id }, data: { status } });
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("updateCodeStatusAction:", error);
+    return { error: "Could not update code status." };
   }
-  await prisma.verificationCode.update({ where: { id }, data: { status } });
-  revalidatePath("/admin");
-  return { success: true };
 }
 
 export async function changePasswordAction(formData: FormData) {
-  const user = await requireAdmin();
-  const password = String(formData.get("password") || "");
-  if (password.length < 8) return { error: "Password must be at least 8 characters" };
-  await prisma.adminUser.update({
-    where: { id: user.id },
-    data: { passwordHash: await hashPassword(password) },
-  });
-  return { success: true };
+  try {
+    const user = await requireAdmin();
+    const password = String(formData.get("password") || "");
+    if (password.length < 8) return { error: "Password must be at least 8 characters" };
+    await prisma.adminUser.update({
+      where: { id: user.id },
+      data: { passwordHash: await hashPassword(password) },
+    });
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    return { error: "Could not change password." };
+  }
 }

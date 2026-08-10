@@ -44,9 +44,11 @@ echo "=== 4. Prisma query ==="
 if docker ps --format '{{.Names}}' | grep -q "^${CONTAINER}$"; then
   docker exec "$CONTAINER" node -e "
     const { PrismaClient } = require('@prisma/client');
-    const url = process.env.DATABASE_URL || '';
-    const clean = url.replace(/[&?]channel_binding=[^&]*/g, '');
-    const p = new PrismaClient({ datasources: { db: { url: clean } } });
+    let url = process.env.DATABASE_URL || '';
+    url = url.replace(/[&?]channel_binding=[^&]*/g, '');
+    if (!/[?&]sslmode=/.test(url)) url += (url.includes('?') ? '&' : '?') + 'sslmode=require';
+    if (!url.includes('-pooler.')) console.warn('WARN: DATABASE_URL should use -pooler hostname for runtime');
+    const p = new PrismaClient({ datasources: { db: { url } } });
     p.\$queryRaw\`SELECT 1 AS ok\`
       .then(r => { console.log('Prisma OK:', r); process.exit(0); })
       .catch(e => { console.error('Prisma FAILED:', e.message); process.exit(1); })
