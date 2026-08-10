@@ -13,7 +13,8 @@ Uses [hostinger/deploy-on-vps@v2](https://github.com/hostinger/deploy-on-vps) �
 | Name | Value |
 |------|--------|
 | `HOSTINGER_API_KEY` | From hPanel → API |
-| `DATABASE_URL` | Neon Postgres connection string |
+| `DATABASE_URL` | Neon **pooled** connection (`-pooler` hostname, `sslmode=require`) |
+| `DIRECT_URL` | Neon **direct** connection (for Prisma CLI; optional on VPS runtime) |
 | `JWT_SECRET` | Random string for admin auth |
 | `ADMIN_EMAIL` | Admin login email |
 | `ADMIN_PASSWORD` | Admin password (for seed if needed) |
@@ -56,17 +57,21 @@ Hostinger Docker gets env vars from GitHub — not from `.env` on your laptop.
 
 GitHub → **Settings → Secrets → `DATABASE_URL`**
 
-Copy the **Pooled connection** string from [Neon Console](https://console.neon.tech) → your project → **Connect**.
+Copy both strings from [Neon Console](https://console.neon.tech) → **Connect**:
 
-Use this format:
+**`DATABASE_URL`** — Pooled connection (runtime / Prisma Client):
 
 ```
 postgresql://USER:PASSWORD@ep-xxxx-pooler.region.aws.neon.tech/neondb?sslmode=require&connect_timeout=15
 ```
 
-**Do not include** `channel_binding=require` — it breaks Node/Docker on many VPS hosts.
+**`DIRECT_URL`** — Direct connection (Prisma CLI: `db push`, migrations):
 
-If the pooler still fails, try Neon's **Direct connection** string (hostname without `-pooler`) instead.
+```
+postgresql://USER:PASSWORD@ep-xxxx.region.aws.neon.tech/neondb?sslmode=require&connect_timeout=15
+```
+
+Per [Neon Prisma docs](https://neon.com/docs/guides/prisma): use `-pooler` for app runtime; use direct (no `-pooler`) for CLI. Both must include `sslmode=require`. Do not use `channel_binding=require`.
 
 **2. Wake up Neon (free tier)**
 

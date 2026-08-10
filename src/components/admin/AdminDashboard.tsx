@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
   deleteBlogAction,
   deleteProductAction,
@@ -9,6 +10,7 @@ import {
   saveBlogAction,
   saveProductAction,
   saveTestimonialAction,
+  type ActionResult,
 } from "@/lib/actions/admin";
 import { CodesAdmin } from "@/components/admin/CodesAdmin";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
@@ -55,6 +57,25 @@ function isTabId(value: string): value is TabId {
   return TABS.some((tab) => tab.id === value);
 }
 
+function runAction(
+  action: (formData: FormData) => Promise<ActionResult>,
+  formData: FormData,
+  startTransition: ReturnType<typeof useTransition>[1],
+  successMessage: string,
+) {
+  startTransition(async () => {
+    const result = await action(formData);
+    if (result?.error) {
+      toast.error(result.error);
+      if (result.error.includes("log in")) {
+        window.location.assign("/admin/login");
+      }
+      return;
+    }
+    toast.success(successMessage);
+  });
+}
+
 export function AdminDashboard({
   email,
   initialTab,
@@ -64,6 +85,7 @@ export function AdminDashboard({
   unusedCount,
 }: AdminDashboardProps) {
   const [tab, setTab] = useState<TabId>(initialTab);
+  const [pending, startTransition] = useTransition();
 
   function switchTab(nextTab: TabId) {
     setTab(nextTab);
@@ -104,7 +126,12 @@ export function AdminDashboard({
 
       {tab === "products" && (
         <section className="grid gap-8 lg:grid-cols-2">
-          <form action={saveProductAction} className="space-y-3 rounded-2xl border border-border bg-card p-5">
+          <form
+            className="space-y-3 rounded-2xl border border-border bg-card p-5"
+            action={(formData) =>
+              runAction(saveProductAction, formData, startTransition, "Product saved")
+            }
+          >
             <h2 className="font-display text-2xl">Add / update product</h2>
             <p className="text-xs text-muted">Leave ID empty to create. Paste existing ID to update.</p>
             <div>
@@ -149,7 +176,9 @@ export function AdminDashboard({
               <input type="checkbox" name="published" defaultChecked />
               Published
             </label>
-            <Button type="submit">Save product</Button>
+            <Button type="submit" disabled={pending}>
+              {pending ? "Saving…" : "Save product"}
+            </Button>
           </form>
 
           <div className="space-y-3">
@@ -159,9 +188,14 @@ export function AdminDashboard({
                 <p className="text-xs text-muted">
                   {product.slug} · {product.id}
                 </p>
-                <form action={deleteProductAction} className="mt-3">
+                <form
+                  className="mt-3"
+                  action={(formData) =>
+                    runAction(deleteProductAction, formData, startTransition, "Product deleted")
+                  }
+                >
                   <input type="hidden" name="id" value={product.id} />
-                  <Button type="submit" variant="outline" size="sm">
+                  <Button type="submit" variant="outline" size="sm" disabled={pending}>
                     Delete
                   </Button>
                 </form>
@@ -180,7 +214,12 @@ export function AdminDashboard({
 
       {tab === "blog" && (
         <section className="grid gap-8 lg:grid-cols-2">
-          <form action={saveBlogAction} className="space-y-3 rounded-2xl border border-border bg-card p-5">
+          <form
+            className="space-y-3 rounded-2xl border border-border bg-card p-5"
+            action={(formData) =>
+              runAction(saveBlogAction, formData, startTransition, "Post saved")
+            }
+          >
             <h2 className="font-display text-2xl">Add / update post</h2>
             <Input name="id" placeholder="ID to update (optional)" />
             <Input name="title" placeholder="Title" required />
@@ -199,16 +238,23 @@ export function AdminDashboard({
               <input type="checkbox" name="published" defaultChecked />
               Published
             </label>
-            <Button type="submit">Save post</Button>
+            <Button type="submit" disabled={pending}>
+              {pending ? "Saving…" : "Save post"}
+            </Button>
           </form>
           <div className="space-y-3">
             {posts.map((post) => (
               <div key={post.id} className="rounded-2xl border border-border bg-card p-4">
                 <p className="font-medium">{post.title}</p>
                 <p className="text-xs text-muted">{post.slug}</p>
-                <form action={deleteBlogAction} className="mt-3">
+                <form
+                  className="mt-3"
+                  action={(formData) =>
+                    runAction(deleteBlogAction, formData, startTransition, "Post deleted")
+                  }
+                >
                   <input type="hidden" name="id" value={post.id} />
-                  <Button type="submit" variant="outline" size="sm">
+                  <Button type="submit" variant="outline" size="sm" disabled={pending}>
                     Delete
                   </Button>
                 </form>
@@ -221,8 +267,10 @@ export function AdminDashboard({
       {tab === "testimonials" && (
         <section className="grid gap-8 lg:grid-cols-2">
           <form
-            action={saveTestimonialAction}
             className="space-y-3 rounded-2xl border border-border bg-card p-5"
+            action={(formData) =>
+              runAction(saveTestimonialAction, formData, startTransition, "Testimonial saved")
+            }
           >
             <h2 className="font-display text-2xl">Add / update testimonial</h2>
             <Input name="id" placeholder="ID to update (optional)" />
@@ -233,16 +281,28 @@ export function AdminDashboard({
               <input type="checkbox" name="published" defaultChecked />
               Published
             </label>
-            <Button type="submit">Save testimonial</Button>
+            <Button type="submit" disabled={pending}>
+              {pending ? "Saving…" : "Save testimonial"}
+            </Button>
           </form>
           <div className="space-y-3">
             {testimonials.map((item) => (
               <div key={item.id} className="rounded-2xl border border-border bg-card p-4">
                 <p className="font-medium">{item.author}</p>
                 <p className="mt-1 text-sm text-muted">{item.body}</p>
-                <form action={deleteTestimonialAction} className="mt-3">
+                <form
+                  className="mt-3"
+                  action={(formData) =>
+                    runAction(
+                      deleteTestimonialAction,
+                      formData,
+                      startTransition,
+                      "Testimonial deleted",
+                    )
+                  }
+                >
                   <input type="hidden" name="id" value={item.id} />
-                  <Button type="submit" variant="outline" size="sm">
+                  <Button type="submit" variant="outline" size="sm" disabled={pending}>
                     Delete
                   </Button>
                 </form>

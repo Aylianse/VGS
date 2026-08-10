@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Outfit } from "next/font/google";
-import { Toaster } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+import { AppToaster } from "@/components/ui/toaster";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -59,7 +59,7 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Footer />
         <WhatsAppButton />
-        <Toaster position="top-center" richColors />
+        <AppToaster />
       </body>
     </html>
   );

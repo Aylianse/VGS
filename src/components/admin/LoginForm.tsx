@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { loginFormAction } from "@/lib/actions/admin";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,13 @@ function SubmitButton() {
 
 export function LoginForm() {
   const [state, formAction] = useActionState(loginFormAction, undefined);
+
+  useEffect(() => {
+    if (state?.success) {
+      // Full navigation so the auth cookie is included on the next request
+      window.location.assign("/admin");
+    }
+  }, [state?.success]);
 
   return (
     <form
