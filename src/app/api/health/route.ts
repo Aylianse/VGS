@@ -7,7 +7,7 @@ export async function GET() {
     jwtSecret: Boolean(process.env.JWT_SECRET),
     databaseUrl: Boolean(process.env.DATABASE_URL),
     directUrl: Boolean(process.env.DIRECT_URL),
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || null,
+    siteUrl: process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null),
     database: false as boolean,
     adminUser: false as boolean,
     error: null as string | null,

@@ -7,11 +7,10 @@ import { prisma } from "./prisma";
 export { AUTH_COOKIE };
 
 export function authCookieOptions() {
-  // Localhost (dev) must never use Secure cookies — browsers drop them on http://
-  // Production: Secure only when the site is served over HTTPS.
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
-  const secure =
-    process.env.NODE_ENV === "production" && siteUrl.startsWith("https://");
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
+  const secure = siteUrl.startsWith("https://");
 
   return {
     httpOnly: true,
