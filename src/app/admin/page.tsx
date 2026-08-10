@@ -23,21 +23,34 @@ export default async function AdminPage({
   const { tab: tabParam } = await searchParams;
   const tab = resolveAdminTab(tabParam);
 
-  let products: Awaited<ReturnType<typeof prisma.product.findMany>> = [];
-  let posts: Awaited<ReturnType<typeof prisma.blogPost.findMany>> = [];
-  let testimonials: Awaited<ReturnType<typeof prisma.testimonial.findMany>> = [];
+  let products: { id: string; name: string; slug: string }[] = [];
+  let posts: { id: string; title: string; slug: string }[] = [];
+  let testimonials: { id: string; author: string; body: string }[] = [];
   let unusedCount = 0;
   let dbError: string | null = null;
 
   try {
-    [products, posts, testimonials, unusedCount] = await Promise.all([
-      prisma.product.findMany({ orderBy: { sortOrder: "asc" } }),
-      prisma.blogPost.findMany({ orderBy: { publishedAt: "desc" } }),
-      prisma.testimonial.findMany({ orderBy: { sortOrder: "asc" } }),
+    const [productRows, postRows, testimonialRows, codeCount] = await Promise.all([
+      prisma.product.findMany({
+        orderBy: { sortOrder: "asc" },
+        select: { id: true, name: true, slug: true },
+      }),
+      prisma.blogPost.findMany({
+        orderBy: { publishedAt: "desc" },
+        select: { id: true, title: true, slug: true },
+      }),
+      prisma.testimonial.findMany({
+        orderBy: { sortOrder: "asc" },
+        select: { id: true, author: true, body: true },
+      }),
       prisma.verificationCode.count({
         where: { status: "Active", validationCount: { lt: 1 } },
       }),
     ]);
+    products = productRows;
+    posts = postRows;
+    testimonials = testimonialRows;
+    unusedCount = codeCount;
   } catch (error) {
     console.error("Admin DB error:", error);
     dbError =
