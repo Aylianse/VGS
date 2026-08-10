@@ -3,6 +3,11 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import { getAdminSession } from "@/lib/auth";
+import {
+  getUploadDir,
+  getUploadPublicUrl,
+  resolveUploadFolder,
+} from "@/lib/uploads";
 
 export async function POST(request: Request) {
   const session = await getAdminSession();
@@ -25,14 +30,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "File too large (max 8MB)" }, { status: 400 });
     }
 
+    const folder = resolveUploadFolder(String(formData.get("folder") || ""));
     const ext = path.extname(file.name) || ".jpg";
     const filename = `${randomUUID()}${ext}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    const uploadDir = getUploadDir(folder);
+
     await mkdir(uploadDir, { recursive: true });
     const bytes = Buffer.from(await file.arrayBuffer());
     await writeFile(path.join(uploadDir, filename), bytes);
 
-    return NextResponse.json({ url: `/uploads/${filename}` });
+    return NextResponse.json({ url: getUploadPublicUrl(folder, filename) });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
