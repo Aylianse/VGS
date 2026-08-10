@@ -1,4 +1,5 @@
-import { AdminDashboard, resolveAdminTab } from "@/components/admin/AdminDashboard";
+import { AdminDashboard } from "@/components/admin/AdminDashboard";
+import { resolveAdminTab } from "@/lib/admin-tabs";
 import { getAdminSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
