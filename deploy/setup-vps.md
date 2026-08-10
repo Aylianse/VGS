@@ -166,6 +166,12 @@ Make the script executable once:
 chmod +x deploy/deploy.sh
 ```
 
+## 13. Auto-deploy on push to main
+
+**Public repo (no GitHub account secrets):** [vps-auto-deploy.md](vps-auto-deploy.md) — VPS cron pulls from GitHub every few minutes.
+
+**Optional — GitHub Actions (instant deploy):** [github-actions.md](github-actions.md)
+
 ## Troubleshooting
 
 | Issue | Check |

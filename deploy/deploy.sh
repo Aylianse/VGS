@@ -15,7 +15,8 @@ if [[ ! -f .env ]]; then
 fi
 
 echo "==> Pulling latest code..."
-git pull --ff-only
+git fetch origin main
+git reset --hard origin/main
 
 echo "==> Installing dependencies..."
 npm ci
