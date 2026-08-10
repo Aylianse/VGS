@@ -31,6 +31,14 @@ export async function loginFormAction(
     return { error: "Email and password are required" };
   }
 
+  if (!process.env.JWT_SECRET) {
+    return { error: "Server misconfigured: JWT_SECRET is missing on Vercel." };
+  }
+
+  if (!process.env.DATABASE_URL) {
+    return { error: "Server misconfigured: DATABASE_URL is missing on Vercel." };
+  }
+
   try {
     const user = await prisma.adminUser.findUnique({ where: { email } });
     if (!user || !(await verifyPassword(password, user.passwordHash))) {
@@ -41,12 +49,20 @@ export async function loginFormAction(
     const cookieStore = await cookies();
     cookieStore.set(AUTH_COOKIE, token, authCookieOptions());
 
-    // Do not redirect() here — with useActionState it can surface as
-    // "An unexpected response was received from the server."
     return { success: true };
   } catch (error) {
     console.error("Login error:", error);
-    return { error: "Login failed. Check database connection and JWT_SECRET." };
+    const message = error instanceof Error ? error.message : "Unknown error";
+    if (message.includes("JWT_SECRET")) {
+      return { error: "Server misconfigured: JWT_SECRET is invalid or missing." };
+    }
+    if (message.includes("Can't reach database") || message.includes("DATABASE_URL")) {
+      return {
+        error:
+          "Cannot reach Neon database. On Vercel, set DATABASE_URL to the pooled Neon URL with sslmode=require.",
+      };
+    }
+    return { error: "Login failed. Check Vercel env vars and Neon connection." };
   }
 }
 

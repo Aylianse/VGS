@@ -20,12 +20,19 @@ export function ensureConnectTimeout(url: string, seconds = 15) {
   return `${url}${url.includes("?") ? "&" : "?"}connect_timeout=${seconds}`;
 }
 
+/** Neon pooler + Prisma on serverless (Vercel) needs pgbouncer=true. */
+export function ensurePgBouncer(url: string) {
+  if (!url.includes("-pooler.") || /[?&]pgbouncer=/.test(url)) return url;
+  return `${url}${url.includes("?") ? "&" : "?"}pgbouncer=true`;
+}
+
 /** Pooled URL for Prisma Client runtime connections. */
 export function getRuntimeDatabaseUrl(url = process.env.DATABASE_URL) {
   if (!url) return url;
   let normalized = stripChannelBinding(url);
   normalized = ensureSslModeRequire(normalized);
   normalized = ensureConnectTimeout(normalized);
+  normalized = ensurePgBouncer(normalized);
   return normalized;
 }
 
