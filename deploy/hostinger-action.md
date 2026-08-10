@@ -37,11 +37,63 @@ Add an SSH deploy key in Hostinger Docker Manager. See [Hostinger docs](https://
 
 GitHub → **Actions → Deploy to Hostinger VPS → Run workflow**
 
-## Notes
+## Troubleshooting
 
-- Never commit API keys or `.env` to the repo
-- Rotate `HOSTINGER_API_KEY` if it was ever exposed
-- App env vars are injected at deploy time via `environment-variables` in the workflow
+| Problem | Fix |
+|---------|-----|
+| `Can't reach database server` (Neon) | See [Neon connection issues](#neon-connection-issues) below |
+| SSH connection failed | Check `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, firewall port 22 |
+| Build fails | SSH in manually, run `bash deploy/deploy.sh`, read the error |
+| App not updating | Check Hostinger Docker logs for the `vitaglow` container |
+
+### Neon connection issues
+
+If logs show `Can't reach database server at ep-....neon.tech:5432`:
+
+**1. Set `DATABASE_URL` in GitHub Secrets**
+
+Hostinger Docker gets env vars from GitHub — not from `.env` on your laptop.
+
+GitHub → **Settings → Secrets → `DATABASE_URL`**
+
+Copy the **Pooled connection** string from [Neon Console](https://console.neon.tech) → your project → **Connect**.
+
+Use this format:
+
+```
+postgresql://USER:PASSWORD@ep-xxxx-pooler.region.aws.neon.tech/neondb?sslmode=require&connect_timeout=15
+```
+
+**Do not include** `channel_binding=require` — it breaks Node/Docker on many VPS hosts.
+
+If the pooler still fails, try Neon's **Direct connection** string (hostname without `-pooler`) instead.
+
+**2. Wake up Neon (free tier)**
+
+Open the Neon console — suspended databases wake on first connection. Click your project, then retry the site.
+
+**3. IP allowlist**
+
+Neon → **Settings → IP Allow** — either disable restrictions or add your Hostinger VPS public IP.
+
+**4. Redeploy after changing secrets**
+
+GitHub → **Actions → Deploy to Hostinger VPS → Run workflow**
+
+**5. Test from the VPS (SSH)**
+
+```bash
+docker exec -it vitaglow printenv DATABASE_URL
+# Should print your connection string (not empty)
+
+docker exec -it vitaglow node -e "
+const { PrismaClient } = require('@prisma/client');
+const p = new PrismaClient();
+p.\$queryRaw\`SELECT 1\`.then(() => console.log('OK')).catch(e => console.error(e.message)).finally(() => p.\$disconnect());
+"
+```
+
+If `DATABASE_URL` is empty, the GitHub secret is missing or the deploy did not inject it.
 
 ## Dynamic images folder
 
