@@ -1,4 +1,60 @@
 import { prisma } from "@/lib/prisma";
+import type { CarouselSlideView } from "@/lib/admin-types";
+
+const DEFAULT_CAROUSEL_SLIDES: CarouselSlideView[] = [
+  {
+    id: "default-1",
+    title: "Glow that feels natural",
+    subtitle: "Night creams, capsules & soaps crafted with glutathione and botanicals.",
+    ctaLabel: "Shop Our Range",
+    ctaHref: "/products",
+    secondaryCtaLabel: "Know About Us",
+    secondaryCtaHref: "/about",
+    imageUrl: null,
+    imageAlt: null,
+    sortOrder: 1,
+    published: true,
+  },
+  {
+    id: "default-2",
+    title: "Verify every purchase",
+    subtitle: "Authentic Vita Glow products carry a code. Check yours in seconds.",
+    ctaLabel: "Verify Product",
+    ctaHref: "/verify",
+    secondaryCtaLabel: "Know About Us",
+    secondaryCtaHref: "/about",
+    imageUrl: null,
+    imageAlt: null,
+    sortOrder: 2,
+    published: true,
+  },
+  {
+    id: "default-3",
+    title: "Talk to us on WhatsApp",
+    subtitle: "Questions about routine or authenticity? We're one message away.",
+    ctaLabel: "Message Us",
+    ctaHref: "/contact",
+    secondaryCtaLabel: "Know About Us",
+    secondaryCtaHref: "/about",
+    imageUrl: null,
+    imageAlt: null,
+    sortOrder: 3,
+    published: true,
+  },
+];
+
+export async function getPublishedCarouselSlides(): Promise<CarouselSlideView[]> {
+  try {
+    const slides = await prisma.carouselSlide.findMany({
+      where: { published: true },
+      orderBy: { sortOrder: "asc" },
+    });
+    if (slides.length === 0) return DEFAULT_CAROUSEL_SLIDES;
+    return slides;
+  } catch {
+    return DEFAULT_CAROUSEL_SLIDES;
+  }
+}
 
 export async function getPublishedProducts() {
   try {

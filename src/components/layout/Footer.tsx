@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { NAV_LINKS, SITE, telUrl, whatsappUrl } from "@/lib/site";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -8,9 +9,7 @@ export function Footer() {
     <footer className="mt-auto border-t border-border bg-ink text-ivory">
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <p className="font-display text-3xl">
-            Vita<span className="text-blush">Glow</span>
-          </p>
+          <BrandLogo height={56} />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-ivory/70">
             {SITE.description}
           </p>

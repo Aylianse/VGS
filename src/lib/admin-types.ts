@@ -30,3 +30,19 @@ export type AdminTestimonial = {
   sortOrder: number;
   published: boolean;
 };
+
+export type AdminCarouselSlide = {
+  id: string;
+  title: string;
+  subtitle: string;
+  ctaLabel: string;
+  ctaHref: string;
+  secondaryCtaLabel: string | null;
+  secondaryCtaHref: string | null;
+  imageUrl: string | null;
+  imageAlt: string | null;
+  sortOrder: number;
+  published: boolean;
+};
+
+export type CarouselSlideView = AdminCarouselSlide;

@@ -1,0 +1,623 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fira+Code:wght@300..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+/* Content typography/tables/lists: app/styles/lexical-content.css (via app.css) */
+
+.lexical-editor-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: #10b981; // Emerald/green focus ring
+    box-shadow: 0 4px 24px rgba(16, 185, 129, 0.08);
+  }
+
+  .dark & {
+    border-color: #334155;
+    background-color: #1e293b;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+
+    &:focus-within {
+      border-color: #10b981;
+      box-shadow: 0 4px 24px rgba(16, 185, 129, 0.15);
+    }
+  }
+}
+
+// --- Draggable Block Styles ---
+.draggable-block-menu {
+  border-radius: 4px;
+  padding: 2px 4px;
+  cursor: grab;
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 140ms ease-in-out, opacity 160ms ease-in-out;
+  background-color: transparent;
+  z-index: 10;
+
+  &:hover {
+    background-color: #f1f5f9;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  .draggable-block-handle {
+    font-size: 14px;
+    color: #94a3b8;
+    user-select: none;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .dark & {
+    &:hover {
+      background-color: #334155;
+    }
+    .draggable-block-handle {
+      color: #64748b;
+    }
+  }
+}
+
+.draggable-block-target-line {
+  pointer-events: none;
+  background: #2563eb; // beautiful blue-600 indicator
+  height: 2px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  will-change: transform;
+  z-index: 100;
+}
+
+// --- Toolbar Styles ---
+.lexical-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  z-index: 10;
+
+  .dark & {
+    background-color: #0f172a;
+    border-bottom: 1px solid #334155;
+  }
+}
+
+.lexical-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.lexical-toolbar-separator {
+  width: 1px;
+  height: 20px;
+  background-color: #cbd5e1;
+  margin: 0 6px;
+
+  .dark & {
+    background-color: #475569;
+  }
+}
+
+.lexical-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+  }
+
+  &.active {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .dark & {
+    color: #94a3b8;
+
+    &:hover {
+      background-color: #334155;
+      color: #f8fafc;
+    }
+
+    &.active {
+      background-color: #064e3b;
+      color: #a7f3d0;
+    }
+  }
+}
+
+// --- Text Formatting / Dropdown styling ---
+.lexical-select-container {
+  position: relative;
+}
+
+.lexical-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+  }
+
+  .dark & {
+    color: #94a3b8;
+    &:hover {
+      background-color: #334155;
+      color: #f8fafc;
+    }
+  }
+}
+
+.lexical-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 4px;
+  min-width: 160px;
+  z-index: 50;
+
+  .dark & {
+    background-color: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.lexical-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.1s ease;
+
+  svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  &:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+  }
+
+  &.active {
+    background-color: #ecfdf5;
+    color: #059669;
+  }
+
+  .dark & {
+    color: #94a3b8;
+    &:hover {
+      background-color: #334155;
+      color: #f8fafc;
+    }
+    &.active {
+      background-color: #064e3b;
+      color: #34d399;
+    }
+  }
+}
+
+// --- Popover and Pickers ---
+.lexical-color-picker-grid {
+  display: grid;
+  grid-template-cols: repeat(5, 1fr);
+  gap: 6px;
+  padding: 8px;
+  min-width: 150px;
+}
+
+.lexical-color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+}
+
+// --- Content Canvas area ---
+.lexical-editor-container {
+  position: relative;
+  min-height: 250px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.lexical-editor-inner-scroll {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.lexical-editor-relative-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.lexical-content-editable {
+  outline: none;
+  min-height: var(--page-height, 250px);
+  width: var(--page-width, 100%);
+  max-width: 100%;
+  margin: var(--page-margin, 0);
+  padding: var(--page-padding, 1.5rem);
+  box-shadow: var(--page-shadow, none);
+  border: var(--page-border, none);
+  border-radius: var(--page-radius, 0);
+  background-color: var(--page-bg, #ffffff);
+  box-sizing: border-box;
+
+  font-family: "DM Sans", "Inter", sans-serif;
+  color: #1e293b;
+  font-size: 15px;
+  line-height: 1.6;
+  tab-size: 4;
+  transition: all 0.2s ease;
+
+  .dark & {
+    color: #cbd5e1;
+    background-color: var(--page-bg-dark, #1e293b);
+    border-color: var(--page-border-color-dark, #334155);
+  }
+}
+
+// Adjust placeholder positioning in page modes
+.editor-placeholder {
+  position: absolute;
+  top: var(--page-padding, 1.5rem);
+  left: var(--page-padding, 1.5rem);
+  color: #94a3b8;
+  font-size: 15px;
+  pointer-events: none;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+// Content typography/tables/lists live in app/styles/lexical-content.css
+
+// --- Image resize chrome (admin-only) ---
+.editor-image-container img.focused {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
+
+.editor-image-container img.focused.draggable {
+  cursor: grab;
+}
+
+.editor-image-container img.focused.draggable:active {
+  cursor: grabbing;
+}
+
+.image-control-wrapper--resizing {
+  touch-action: none;
+}
+
+.image-resizer {
+  display: block;
+  width: 7px;
+  height: 7px;
+  position: absolute;
+  background-color: rgb(60, 132, 244);
+  border: 1px solid #fff;
+}
+
+.image-resizer.image-resizer-n {
+  top: -6px;
+  left: 48%;
+  cursor: n-resize;
+}
+
+.image-resizer.image-resizer-ne {
+  top: -6px;
+  right: -6px;
+  cursor: ne-resize;
+}
+
+.image-resizer.image-resizer-e {
+  bottom: 48%;
+  right: -6px;
+  cursor: e-resize;
+}
+
+.image-resizer.image-resizer-se {
+  bottom: -2px;
+  right: -6px;
+  cursor: nwse-resize;
+}
+
+.image-resizer.image-resizer-s {
+  bottom: -2px;
+  left: 48%;
+  cursor: s-resize;
+}
+
+.image-resizer.image-resizer-sw {
+  bottom: -2px;
+  left: -6px;
+  cursor: sw-resize;
+}
+
+.image-resizer.image-resizer-w {
+  bottom: 48%;
+  left: -6px;
+  cursor: w-resize;
+}
+
+.image-resizer.image-resizer-nw {
+  top: -6px;
+  left: -6px;
+  cursor: nw-resize;
+}
+
+// Floating link editor popover
+.floating-link-editor {
+  position: absolute;
+  z-index: 100;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 300px;
+
+  input {
+    flex: 1;
+    border: 1px solid #cbd5e1;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+
+    &:focus {
+      border-color: #10b981;
+    }
+  }
+
+  button {
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .dark & {
+    background-color: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    input {
+      background-color: #0f172a;
+      border-color: #475569;
+      color: #f8fafc;
+    }
+  }
+}
+
+// Table Action Popover menu
+.table-action-menu {
+  position: absolute;
+  z-index: 101;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 4px;
+  min-width: 180px;
+
+  .dark & {
+    background-color: #1e293b;
+    border-color: #334155;
+  }
+}
+
+// --- Slash Menu & Draggable & Code Copy Styles ---
+.editor-slash-menu {
+  .dark & {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+    
+    div {
+      color: #94a3b8 !important;
+      &:hover {
+        background-color: #334155 !important;
+        color: #f8fafc !important;
+      }
+    }
+  }
+}
+
+.editor-drag-handle {
+  &:hover {
+    background-color: #f1f5f9;
+  }
+  .dark & {
+    &:hover {
+      background-color: #334155;
+    }
+  }
+}
+
+.editor-code-copy-button {
+  .dark & {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+    &:hover {
+      background-color: #334155 !important;
+    }
+  }
+}
+
+
+// --- Floating Text Format Toolbar ---
+.lexical-floating-toolbar {
+  display: flex;
+  background: #ffffff;
+  padding: 4px;
+  vertical-align: middle;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  opacity: 0;
+  background-color: #fff;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  will-change: transform, opacity;
+  border: 1px solid #e2e8f0;
+  align-items: center;
+  gap: 2px;
+
+  .dark & {
+    background: #1e293b;
+    border: 1px solid #334155;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .popup-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 6px;
+    color: #475569;
+    transition: all 0.15s ease;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      background-color: #f1f5f9;
+      color: #0f172a;
+    }
+
+    &.active {
+      background-color: #d1fae5;
+      color: #065f46;
+    }
+
+    .dark & {
+      color: #94a3b8;
+
+      &:hover {
+        background-color: #334155;
+        color: #f8fafc;
+      }
+
+      &.active {
+        background-color: #064e3b;
+        color: #a7f3d0;
+      }
+    }
+  }
+}
+
+// --- Font Select specific styles ---
+.font-family-btn {
+  width: 120px;
+  justify-content: space-between;
+  .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.font-size-btn {
+  width: 70px;
+  justify-content: space-between;
+}
+
+.font-size-menu {
+  min-width: 80px;
+  max-height: 200px;
+  overflow-y: auto;
+}

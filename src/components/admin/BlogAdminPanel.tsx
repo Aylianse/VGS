@@ -68,8 +68,8 @@ export function BlogAdminPanel({ posts }: { posts: AdminBlogPost[] }) {
           name="body"
           label="Body"
           defaultValue={selected?.body ?? ""}
-          minHeight="320px"
           required
+          uploadFolder="blog"
         />
 
         <ImageUploadField

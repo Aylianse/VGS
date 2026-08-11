@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { BlogPostingJsonLd } from "@/components/seo/JsonLd";
+import { BlogPostingJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { RichContent } from "@/components/content/RichContent";
 import { getPostBySlug } from "@/lib/queries";
+import { buildPageMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -17,17 +18,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = post.metaTitle || post.title;
   const description = post.metaDescription || post.excerpt;
 
-  return {
+  return buildPageMetadata({
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: "article",
-      publishedTime: post.publishedAt.toISOString(),
-      images: post.coverImageUrl ? [{ url: post.coverImageUrl }] : undefined,
-    },
-  };
+    path: `/blog/${post.slug}`,
+    image: post.coverImageUrl,
+    type: "article",
+  });
 }
 
 export default async function BlogPostPage({ params }: Props) {
@@ -37,6 +34,13 @@ export default async function BlogPostPage({ params }: Props) {
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Blog", path: "/blog" },
+          { name: post.title, path: `/blog/${post.slug}` },
+        ]}
+      />
       <BlogPostingJsonLd
         title={post.title}
         description={post.excerpt}

@@ -1,4 +1,5 @@
 export const ADMIN_TABS = [
+  { id: "carousel", label: "Carousel" },
   { id: "products", label: "Products" },
   { id: "codes", label: "Codes" },
   { id: "blog", label: "Blog" },
@@ -13,5 +14,5 @@ function isAdminTabId(value: string): value is AdminTabId {
 
 export function resolveAdminTab(tab?: string): AdminTabId {
   if (tab && isAdminTabId(tab)) return tab;
-  return "products";
+  return "carousel";
 }

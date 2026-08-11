@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { loginFormAction } from "@/lib/actions/admin";
@@ -31,7 +32,8 @@ export function LoginForm() {
       action={formAction}
       className="w-full max-w-md space-y-4 rounded-[1.5rem] border border-border bg-card p-8 shadow-sm"
     >
-      <div>
+      <div className="flex flex-col items-center text-center">
+        <BrandLogo height={64} className="mb-4" />
         <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">Admin</p>
         <h1 className="mt-2 font-display text-3xl">Sign in</h1>
       </div>

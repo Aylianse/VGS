@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { VerifyForm } from "@/components/verify/VerifyForm";
+import { buildPageMetadata } from "@/lib/seo";
+import { SITE } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Verify Your Product",
+export const metadata: Metadata = buildPageMetadata({
+  title: `Verify Your Product | ${SITE.name}`,
   description:
     "Enter your Vita Glow packaging code to confirm authenticity and protect against counterfeits.",
-};
+  path: "/verify",
+});
 
 export default function VerifyPage() {
   return (

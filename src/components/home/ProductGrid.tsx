@@ -5,17 +5,55 @@ import { plainTextPreview } from "@/lib/sanitize-html";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({
+  product,
+  compact = false,
+}: {
+  product: Product;
+  compact?: boolean;
+}) {
   const image = product.imageUrls[0] || "/products/placeholder.svg";
+
+  if (compact) {
+    return (
+      <article className="group flex flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card transition hover:-translate-y-1 hover:shadow-xl hover:shadow-rose/10">
+        <Link
+          href={`/products/${product.slug}`}
+          className="relative block aspect-[4/5] overflow-hidden bg-cream"
+        >
+          <Image
+            src={image}
+            alt={product.name}
+            fill
+            className="object-cover transition duration-500 group-hover:scale-[1.03]"
+            sizes="(max-width: 768px) 100vw, 33vw"
+          />
+        </Link>
+        <div className="flex flex-col gap-3 p-4">
+          <h3 className="font-display text-xl leading-snug text-ink">
+            <Link href={`/products/${product.slug}`} className="hover:text-rose-deep">
+              {product.name}
+            </Link>
+          </h3>
+          <Link href="/verify" className={cn(buttonVariants({ size: "sm" }), "w-full")}>
+            Verify product
+          </Link>
+        </div>
+      </article>
+    );
+  }
 
   return (
     <article className="group flex flex-col overflow-hidden rounded-[1.5rem] border border-border bg-card transition hover:-translate-y-1 hover:shadow-xl hover:shadow-rose/10">
-      <Link href={`/products/${product.slug}`} className="relative aspect-[4/3] bg-cream">
+      <Link
+        href={`/products/${product.slug}`}
+        className="relative block aspect-[4/5] overflow-hidden bg-cream"
+      >
         <Image
           src={image}
           alt={product.name}
           fill
-          className="object-contain p-6 transition duration-500 group-hover:scale-105"
+          className="object-cover transition duration-500 group-hover:scale-[1.03]"
           sizes="(max-width: 768px) 100vw, 33vw"
         />
       </Link>
@@ -50,9 +88,11 @@ export function ProductCard({ product }: { product: Product }) {
 export function ProductGrid({
   products,
   title = "Our Products",
+  compact = false,
 }: {
   products: Product[];
   title?: string;
+  compact?: boolean;
 }) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20">
@@ -67,7 +107,7 @@ export function ProductGrid({
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} compact={compact} />
           ))}
         </div>
       )}

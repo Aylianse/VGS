@@ -24,6 +24,7 @@ export default async function AdminPage({
   const { tab: tabParam } = await searchParams;
   const tab = resolveAdminTab(tabParam);
 
+  let carouselSlides: Awaited<ReturnType<typeof prisma.carouselSlide.findMany>> = [];
   let products: Awaited<ReturnType<typeof prisma.product.findMany>> = [];
   let posts: Awaited<ReturnType<typeof prisma.blogPost.findMany>> = [];
   let testimonials: Awaited<ReturnType<typeof prisma.testimonial.findMany>> = [];
@@ -31,7 +32,10 @@ export default async function AdminPage({
   let dbError: string | null = null;
 
   try {
-    const [productRows, postRows, testimonialRows, codeCount] = await Promise.all([
+    const [carouselRows, productRows, postRows, testimonialRows, codeCount] = await Promise.all([
+      prisma.carouselSlide.findMany({
+        orderBy: { sortOrder: "asc" },
+      }),
       prisma.product.findMany({
         orderBy: { sortOrder: "asc" },
       }),
@@ -45,6 +49,7 @@ export default async function AdminPage({
         where: { status: "Active", validationCount: { lt: 1 } },
       }),
     ]);
+    carouselSlides = carouselRows;
     products = productRows;
     posts = postRows;
     testimonials = testimonialRows;
@@ -67,6 +72,7 @@ export default async function AdminPage({
       <AdminDashboard
         email={session.email}
         initialTab={tab}
+        carouselSlides={carouselSlides.map(({ createdAt: _c, updatedAt: _u, ...slide }) => slide)}
         products={products.map(({ createdAt: _c, updatedAt: _u, ...product }) => product)}
         posts={posts.map(({ createdAt: _c, updatedAt: _u, publishedAt: _p, ...post }) => post)}
         testimonials={testimonials.map(({ createdAt: _c, updatedAt: _u, ...item }) => item)}

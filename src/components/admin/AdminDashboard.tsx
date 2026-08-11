@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { logoutAction } from "@/lib/actions/admin";
 import { ADMIN_TABS, type AdminTabId } from "@/lib/admin-tabs";
-import type { AdminBlogPost, AdminProduct, AdminTestimonial } from "@/lib/admin-types";
+import type { AdminBlogPost, AdminCarouselSlide, AdminProduct, AdminTestimonial } from "@/lib/admin-types";
 import { BlogAdminPanel } from "@/components/admin/BlogAdminPanel";
+import { CarouselAdminPanel } from "@/components/admin/CarouselAdminPanel";
 import { CodesAdmin } from "@/components/admin/CodesAdmin";
 import { ProductAdminPanel } from "@/components/admin/ProductAdminPanel";
 import { TestimonialAdminPanel } from "@/components/admin/TestimonialAdminPanel";
@@ -18,6 +19,7 @@ type AdminDashboardProps = {
   products: AdminProduct[];
   posts: AdminBlogPost[];
   testimonials: AdminTestimonial[];
+  carouselSlides: AdminCarouselSlide[];
   unusedCount: number;
 };
 
@@ -27,6 +29,7 @@ export function AdminDashboard({
   products,
   posts,
   testimonials,
+  carouselSlides,
   unusedCount,
 }: AdminDashboardProps) {
   const [tab, setTab] = useState<AdminTabId>(initialTab);
@@ -68,6 +71,7 @@ export function AdminDashboard({
         ))}
       </div>
 
+      {tab === "carousel" && <CarouselAdminPanel slides={carouselSlides} />}
       {tab === "products" && <ProductAdminPanel products={products} />}
       {tab === "codes" && (
         <CodesAdmin

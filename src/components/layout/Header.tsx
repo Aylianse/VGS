@@ -1,10 +1,11 @@
 "use client";
 
+import { BrandLogo } from "@/components/layout/BrandLogo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, Phone, ShieldCheck, X } from "lucide-react";
-import { NAV_LINKS, SITE, telUrl, whatsappUrl } from "@/lib/site";
+import { NAV_LINKS, telUrl, whatsappUrl } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
@@ -36,14 +37,7 @@ export function Header() {
 
       <div className="border-b border-border/80 bg-ivory/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
-          <Link href="/" className="group">
-            <span className="font-display text-2xl tracking-tight text-ink sm:text-3xl">
-              Vita<span className="text-rose">Glow</span>
-            </span>
-            <span className="mt-0.5 block text-[10px] uppercase tracking-[0.22em] text-muted">
-              {SITE.tagline}
-            </span>
-          </Link>
+          <BrandLogo showTagline priority height={52} />
 
           <nav className="hidden items-center gap-1 lg:flex">
             {NAV_LINKS.map((link) => (
