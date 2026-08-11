@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { BlogPostingJsonLd } from "@/components/seo/JsonLd";
+import { RichContent } from "@/components/content/RichContent";
 import { getPostBySlug } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
@@ -65,11 +66,10 @@ export default async function BlogPostPage({ params }: Props) {
             />
           </div>
         )}
-        <div className="prose-vita mt-10 space-y-5 text-base leading-relaxed text-ink/85">
-          {post.body.split("\n\n").map((para) => (
-            <p key={para.slice(0, 40)}>{para}</p>
-          ))}
-        </div>
+        <RichContent
+          content={post.body}
+          className="prose-vita mt-10 space-y-5 text-base leading-relaxed text-ink/85"
+        />
       </article>
     </>
   );

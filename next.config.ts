@@ -10,7 +10,12 @@ const nextConfig: NextConfig = {
     root: projectRoot,
   },
   images: {
-    remotePatterns: [],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
     unoptimized: false,
   },
 };

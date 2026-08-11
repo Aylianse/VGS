@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isCloudinaryConfigured } from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
 
 /** Public health check — safe booleans only, no secrets. */
@@ -8,6 +9,7 @@ export async function GET() {
     databaseUrl: Boolean(process.env.DATABASE_URL),
     directUrl: Boolean(process.env.DIRECT_URL),
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null),
+    cloudinary: isCloudinaryConfigured(),
     database: false as boolean,
     adminUser: false as boolean,
     error: null as string | null,

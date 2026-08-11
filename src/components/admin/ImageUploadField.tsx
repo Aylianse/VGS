@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
@@ -10,16 +10,22 @@ type ImageUploadFieldProps = {
   label: string;
   folder?: "products" | "blog" | "general";
   placeholder?: string;
+  defaultValue?: string;
 };
 
 export function ImageUploadField({
   name,
   label,
   folder = "general",
-  placeholder = "/uploads/products/example.jpg",
+  placeholder = "https://res.cloudinary.com/...",
+  defaultValue = "",
 }: ImageUploadFieldProps) {
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState(defaultValue);
   const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    setUrl(defaultValue);
+  }, [defaultValue]);
 
   async function onFileSelected(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -71,7 +77,7 @@ export function ImageUploadField({
             onChange={onFileSelected}
           />
           <span className="inline-flex h-9 items-center rounded-full border border-border bg-cream px-4 text-sm hover:bg-blush/40">
-            {uploading ? "Uploading…" : "Upload image"}
+            {uploading ? "Uploading…" : "Upload to Cloudinary"}
           </span>
         </label>
         {url && (
