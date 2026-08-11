@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ProductJsonLd } from "@/components/seo/JsonLd";
+import { ProductJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { RichContent } from "@/components/content/RichContent";
 import { plainTextPreview } from "@/lib/sanitize-html";
+import { buildPageMetadata } from "@/lib/seo";
 import { buttonVariants } from "@/components/ui/button";
 import { getProductBySlug, getPublishedProducts } from "@/lib/queries";
 import { SITE, whatsappUrl } from "@/lib/site";
@@ -22,15 +23,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = product.metaTitle || product.name;
   const description = product.metaDescription || plainTextPreview(product.description, 160);
 
-  return {
+  return buildPageMetadata({
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      images: product.imageUrls[0] ? [{ url: product.imageUrls[0] }] : undefined,
-    },
-  };
+    path: `/products/${product.slug}`,
+    image: product.imageUrls[0],
+  });
 }
 
 export default async function ProductDetailPage({ params }: Props) {
@@ -43,6 +41,13 @@ export default async function ProductDetailPage({ params }: Props) {
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Products", path: "/products" },
+          { name: product.name, path: `/products/${product.slug}` },
+        ]}
+      />
       <ProductJsonLd
         name={product.name}
         description={product.description}

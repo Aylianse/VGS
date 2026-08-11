@@ -137,6 +137,36 @@ International reach, repeat customers, and transparent verify-your-product tooli
   },
 ];
 
+const carouselSlides = [
+  {
+    title: "Glow that feels natural",
+    subtitle: "Night creams, capsules & soaps crafted with glutathione and botanicals.",
+    ctaLabel: "Shop Our Range",
+    ctaHref: "/products",
+    secondaryCtaLabel: "Know About Us",
+    secondaryCtaHref: "/about",
+    sortOrder: 1,
+  },
+  {
+    title: "Verify every purchase",
+    subtitle: "Authentic Vita Glow products carry a code. Check yours in seconds.",
+    ctaLabel: "Verify Product",
+    ctaHref: "/verify",
+    secondaryCtaLabel: "Know About Us",
+    secondaryCtaHref: "/about",
+    sortOrder: 2,
+  },
+  {
+    title: "Talk to us on WhatsApp",
+    subtitle: "Questions about routine or authenticity? We're one message away.",
+    ctaLabel: "Message Us",
+    ctaHref: "/contact",
+    secondaryCtaLabel: "Know About Us",
+    secondaryCtaHref: "/about",
+    sortOrder: 3,
+  },
+];
+
 const testimonials = [
   {
     author: "Kenjii",
@@ -185,6 +215,11 @@ async function main() {
   const existingTestimonials = await prisma.testimonial.count();
   if (existingTestimonials === 0) {
     await prisma.testimonial.createMany({ data: testimonials });
+  }
+
+  const existingCarousel = await prisma.carouselSlide.count();
+  if (existingCarousel === 0) {
+    await prisma.carouselSlide.createMany({ data: carouselSlides });
   }
 
   console.log("Seed complete.");

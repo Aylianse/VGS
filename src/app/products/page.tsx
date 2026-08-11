@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { ProductGrid } from "@/components/home/ProductGrid";
 import { getPublishedProducts } from "@/lib/queries";
+import { buildPageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Products",
-  description: `Browse ${SITE.name} night creams, glutathione capsules, and whitening soaps.`,
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: `Products | ${SITE.name}`,
+  description: `Browse ${SITE.name} night creams, glutathione capsules, and whitening soaps. Verify authenticity on every purchase.`,
+  path: "/products",
+});
 
 export const dynamic = "force-dynamic";
 

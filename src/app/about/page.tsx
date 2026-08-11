@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import { ABOUT_CONTENT, SITE } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About Us",
+export const metadata: Metadata = buildPageMetadata({
+  title: `About Us | ${SITE.name}`,
   description: ABOUT_CONTENT.intro,
-  openGraph: {
-    title: `About ${SITE.legalName}`,
-    description: ABOUT_CONTENT.intro,
-  },
-};
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

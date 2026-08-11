@@ -84,3 +84,22 @@ model Testimonial {
   @@index([published, sortOrder])
   @@map("testimonials")
 }
+
+model CarouselSlide {
+  id                String   @id @default(cuid())
+  title             String
+  subtitle          String
+  ctaLabel          String
+  ctaHref           String
+  secondaryCtaLabel String?
+  secondaryCtaHref  String?
+  imageUrl          String?
+  imageAlt          String?
+  sortOrder         Int      @default(0)
+  published         Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([published, sortOrder])
+  @@map("carousel_slides")
+}

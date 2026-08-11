@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact/ContactForm";
 import { FAQ_ITEMS, SITE, telUrl, whatsappUrl } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact Us",
+export const metadata: Metadata = buildPageMetadata({
+  title: `Contact Us | ${SITE.name}`,
   description: `Contact ${SITE.legalName} via form, WhatsApp, phone, or email.`,
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

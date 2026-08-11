@@ -34,11 +34,17 @@ export const metadata: Metadata = {
     siteName: SITE.legalName,
     title: SITE.legalName,
     description: SITE.description,
+    images: [{ url: SITE.logoUrl, alt: `${SITE.name} logo` }],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE.legalName,
     description: SITE.description,
+    images: [SITE.logoUrl],
+  },
+  icons: {
+    icon: SITE.logoUrl,
+    apple: SITE.logoUrl,
   },
   robots: {
     index: true,

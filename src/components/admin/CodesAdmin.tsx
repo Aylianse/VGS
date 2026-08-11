@@ -3,10 +3,18 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { generateCodesAction, searchCodeAction, updateCodeStatusAction } from "@/lib/actions/admin";
+import {
+  downloadCodesExcel,
+  downloadCodesPdf,
+  downloadCodesTxt,
+  type CodeExportMeta,
+} from "@/lib/code-exports";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 
 type ProductOption = { id: string; name: string };
+
+type DownloadFormat = "txt" | "pdf" | "excel";
 
 export function CodesAdmin({
   products,
@@ -16,7 +24,8 @@ export function CodesAdmin({
   unusedCount: number;
 }) {
   const [pending, startTransition] = useTransition();
-  const [codes, setCodes] = useState<string[]>([]);
+  const [exportMeta, setExportMeta] = useState<CodeExportMeta | null>(null);
+  const [downloadedFormats, setDownloadedFormats] = useState<DownloadFormat[]>([]);
   const [searchResult, setSearchResult] = useState<{
     id: string;
     code: string;
@@ -35,8 +44,14 @@ export function CodesAdmin({
         return;
       }
       if ("codes" in res && res.codes) {
-        setCodes(res.codes);
-        toast.success(`Generated ${res.count} codes`);
+        setExportMeta({
+          codes: res.codes,
+          productName: res.productName ?? "Product",
+          customerName: res.customerName ?? "Batch",
+          generatedAt: new Date(),
+        });
+        setDownloadedFormats([]);
+        toast.success(`Generated ${res.count} codes — download as PDF, Excel, or TXT`);
       }
     });
   }
@@ -63,14 +78,17 @@ export function CodesAdmin({
     });
   }
 
-  function downloadCodes() {
-    const blob = new Blob([codes.join("\n")], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "vita-glow-codes.txt";
-    a.click();
-    URL.revokeObjectURL(url);
+  function handleDownload(format: DownloadFormat) {
+    if (!exportMeta) return;
+
+    if (format === "txt") downloadCodesTxt(exportMeta);
+    if (format === "pdf") downloadCodesPdf(exportMeta);
+    if (format === "excel") downloadCodesExcel(exportMeta);
+
+    setDownloadedFormats((current) =>
+      current.includes(format) ? current : [...current, format],
+    );
+    toast.success(`Downloaded ${format.toUpperCase()} file`);
   }
 
   return (
@@ -105,15 +123,37 @@ export function CodesAdmin({
         <Button type="submit" disabled={pending}>
           {pending ? "Working…" : "Generate"}
         </Button>
-        {codes.length > 0 && (
-          <div className="rounded-xl bg-cream p-3">
-            <div className="mb-2 flex items-center justify-between">
-              <p className="text-sm font-medium">{codes.length} codes</p>
-              <Button type="button" size="sm" variant="outline" onClick={downloadCodes}>
-                Download
-              </Button>
+
+        {exportMeta && exportMeta.codes.length > 0 && (
+          <div className="rounded-xl bg-cream p-4">
+            <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">{exportMeta.codes.length} codes ready</p>
+                <p className="text-xs text-muted">
+                  {exportMeta.productName} · {exportMeta.customerName}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" size="sm" variant="outline" onClick={() => handleDownload("pdf")}>
+                  {downloadedFormats.includes("pdf") ? "PDF ✓" : "PDF"}
+                </Button>
+                <Button type="button" size="sm" variant="outline" onClick={() => handleDownload("excel")}>
+                  {downloadedFormats.includes("excel") ? "Excel ✓" : "Excel"}
+                </Button>
+                <Button type="button" size="sm" variant="outline" onClick={() => handleDownload("txt")}>
+                  {downloadedFormats.includes("txt") ? "TXT ✓" : "TXT"}
+                </Button>
+              </div>
             </div>
-            <pre className="max-h-48 overflow-auto text-xs">{codes.join("\n")}</pre>
+            <pre className="max-h-48 overflow-auto rounded-lg border border-border bg-card p-3 text-xs">
+              {exportMeta.codes.join("\n")}
+            </pre>
+            {downloadedFormats.length > 0 && (
+              <p className="mt-2 text-xs text-muted">
+                Downloaded: {downloadedFormats.map((f) => f.toUpperCase()).join(", ")} — you can
+                download again anytime.
+              </p>
+            )}
           </div>
         )}
       </form>

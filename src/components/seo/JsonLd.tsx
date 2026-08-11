@@ -1,5 +1,6 @@
 import { SITE } from "@/lib/site";
 import { absoluteMediaUrl } from "@/lib/media-url";
+import { absoluteUrl } from "@/lib/seo";
 
 export function OrganizationJsonLd() {
   const data = {
@@ -7,9 +8,67 @@ export function OrganizationJsonLd() {
     "@type": "Organization",
     name: SITE.legalName,
     url: SITE.url,
+    logo: SITE.logoUrl,
     email: SITE.email,
     telephone: SITE.phone,
     description: SITE.description,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+export function WebSiteJsonLd() {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE.legalName,
+    url: SITE.url,
+    description: SITE.description,
+    publisher: {
+      "@type": "Organization",
+      name: SITE.legalName,
+      logo: {
+        "@type": "ImageObject",
+        url: SITE.logoUrl,
+      },
+    },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${absoluteUrl("/verify")}?code={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    />
+  );
+}
+
+export function BreadcrumbJsonLd({
+  items,
+}: {
+  items: Array<{ name: string; path: string }>;
+}) {
+  const data = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.path),
+    })),
   };
 
   return (

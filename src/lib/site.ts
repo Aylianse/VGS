@@ -11,6 +11,9 @@ export const SITE = {
   url:
     process.env.NEXT_PUBLIC_SITE_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000"),
+  logoUrl:
+    process.env.NEXT_PUBLIC_LOGO_URL ||
+    "https://res.cloudinary.com/rzkuraxy/image/upload/v1786447739/logoVitaglow.png",
   copyright: "Vita Glow Products",
 } as const;
 

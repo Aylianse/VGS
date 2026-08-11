@@ -63,15 +63,15 @@ export function ProductAdminPanel({ products }: { products: AdminProduct[] }) {
           name="description"
           label="Description"
           defaultValue={selected?.description ?? ""}
-          minHeight="180px"
           required
+          uploadFolder="products"
         />
 
         <LexicalEditorField
           name="usageInstructions"
           label="Usage instructions"
           defaultValue={selected?.usageInstructions ?? ""}
-          minHeight="140px"
+          uploadFolder="products"
         />
 
         <ImageUploadField

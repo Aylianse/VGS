@@ -295,7 +295,13 @@ export async function generateCodesAction(formData: FormData) {
     }
 
     revalidatePath("/admin");
-    return { success: true, codes: generated.slice(0, count), count: Math.min(generated.length, count) };
+    return {
+      success: true,
+      codes: generated.slice(0, count),
+      count: Math.min(generated.length, count),
+      productName: product.name,
+      customerName,
+    };
   } catch (error) {
     if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
     console.error("generateCodesAction:", error);
@@ -356,5 +362,70 @@ export async function changePasswordAction(formData: FormData) {
   } catch (error) {
     if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
     return { error: "Could not change password." };
+  }
+}
+
+export async function saveCarouselSlideAction(formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const id = String(formData.get("id") || "");
+    const title = String(formData.get("title") || "").trim();
+    const subtitle = String(formData.get("subtitle") || "").trim();
+    const ctaLabel = String(formData.get("ctaLabel") || "").trim();
+    const ctaHref = String(formData.get("ctaHref") || "").trim();
+    const secondaryCtaLabel = String(formData.get("secondaryCtaLabel") || "").trim() || null;
+    const secondaryCtaHref = String(formData.get("secondaryCtaHref") || "").trim() || null;
+    const imageUrl = String(formData.get("imageUrl") || "").trim() || null;
+    const imageAlt = String(formData.get("imageAlt") || "").trim() || null;
+    const sortOrder = Number(formData.get("sortOrder") || 0);
+    const published = formData.get("published") === "on";
+
+    if (!title || !subtitle || !ctaLabel || !ctaHref) {
+      return { error: "Title, subtitle, and primary button are required" };
+    }
+
+    const data = {
+      title,
+      subtitle,
+      ctaLabel,
+      ctaHref,
+      secondaryCtaLabel,
+      secondaryCtaHref,
+      imageUrl,
+      imageAlt,
+      sortOrder,
+      published,
+    };
+
+    if (id) {
+      await prisma.carouselSlide.update({ where: { id }, data });
+    } else {
+      await prisma.carouselSlide.create({ data });
+    }
+
+    revalidatePath("/");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("saveCarouselSlideAction:", error);
+    return { error: "Could not save carousel slide." };
+  }
+}
+
+export async function deleteCarouselSlideAction(formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+    const id = String(formData.get("id") || "");
+    if (!id) return { error: "Missing id" };
+    await prisma.carouselSlide.delete({ where: { id } });
+    revalidatePath("/");
+    revalidatePath("/admin");
+    return { success: true };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("deleteCarouselSlideAction:", error);
+    return { error: "Could not delete carousel slide." };
   }
 }

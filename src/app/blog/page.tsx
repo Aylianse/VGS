@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getPublishedPosts } from "@/lib/queries";
+import { buildPageMetadata } from "@/lib/seo";
+import { SITE } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Skincare tips, product reviews, and Vita Glow brand stories.",
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: `Blog | ${SITE.name}`,
+  description: "Skincare tips, product reviews, and Vita Glow brand stories for brighter, healthier-looking skin.",
+  path: "/blog",
+});
 
 
 export const dynamic = "force-dynamic";
