@@ -24,9 +24,9 @@ export default async function AdminPage({
   const { tab: tabParam } = await searchParams;
   const tab = resolveAdminTab(tabParam);
 
-  let products: { id: string; name: string; slug: string }[] = [];
-  let posts: { id: string; title: string; slug: string }[] = [];
-  let testimonials: { id: string; author: string; body: string }[] = [];
+  let products: Awaited<ReturnType<typeof prisma.product.findMany>> = [];
+  let posts: Awaited<ReturnType<typeof prisma.blogPost.findMany>> = [];
+  let testimonials: Awaited<ReturnType<typeof prisma.testimonial.findMany>> = [];
   let unusedCount = 0;
   let dbError: string | null = null;
 
@@ -34,15 +34,12 @@ export default async function AdminPage({
     const [productRows, postRows, testimonialRows, codeCount] = await Promise.all([
       prisma.product.findMany({
         orderBy: { sortOrder: "asc" },
-        select: { id: true, name: true, slug: true },
       }),
       prisma.blogPost.findMany({
         orderBy: { publishedAt: "desc" },
-        select: { id: true, title: true, slug: true },
       }),
       prisma.testimonial.findMany({
         orderBy: { sortOrder: "asc" },
-        select: { id: true, author: true, body: true },
       }),
       prisma.verificationCode.count({
         where: { status: "Active", validationCount: { lt: 1 } },
@@ -61,7 +58,7 @@ export default async function AdminPage({
   return (
     <>
       {dbError && (
-        <div className="mx-auto max-w-6xl px-4 pt-6">
+        <div className="mx-auto max-w-7xl px-4 pt-6">
           <p className="rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
             {dbError}
           </p>
@@ -70,9 +67,9 @@ export default async function AdminPage({
       <AdminDashboard
         email={session.email}
         initialTab={tab}
-        products={products}
-        posts={posts}
-        testimonials={testimonials}
+        products={products.map(({ createdAt: _c, updatedAt: _u, ...product }) => product)}
+        posts={posts.map(({ createdAt: _c, updatedAt: _u, publishedAt: _p, ...post }) => post)}
+        testimonials={testimonials.map(({ createdAt: _c, updatedAt: _u, ...item }) => item)}
         unusedCount={unusedCount}
       />
     </>

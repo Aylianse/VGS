@@ -3,6 +3,7 @@ import { mkdir, writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import { getAdminSession } from "@/lib/auth";
+import { isCloudinaryConfigured, uploadImageToCloudinary } from "@/lib/cloudinary";
 import {
   getUploadDir,
   getUploadPublicUrl,
@@ -33,13 +34,21 @@ export async function POST(request: Request) {
     const folder = resolveUploadFolder(String(formData.get("folder") || ""));
     const ext = path.extname(file.name) || ".jpg";
     const filename = `${randomUUID()}${ext}`;
-    const uploadDir = getUploadDir(folder);
-
-    await mkdir(uploadDir, { recursive: true });
     const bytes = Buffer.from(await file.arrayBuffer());
+
+    if (isCloudinaryConfigured()) {
+      const url = await uploadImageToCloudinary(bytes, folder, filename);
+      return NextResponse.json({ url, provider: "cloudinary" });
+    }
+
+    const uploadDir = getUploadDir(folder);
+    await mkdir(uploadDir, { recursive: true });
     await writeFile(path.join(uploadDir, filename), bytes);
 
-    return NextResponse.json({ url: getUploadPublicUrl(folder, filename) });
+    return NextResponse.json({
+      url: getUploadPublicUrl(folder, filename),
+      provider: "local",
+    });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

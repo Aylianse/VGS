@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@prisma/client";
+import { plainTextPreview } from "@/lib/sanitize-html";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +26,7 @@ export function ProductCard({ product }: { product: Product }) {
           </Link>
         </h3>
         <p className="mt-2 line-clamp-3 flex-1 text-sm leading-relaxed text-muted">
-          {product.description}
+          {plainTextPreview(product.description, 180)}
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Link

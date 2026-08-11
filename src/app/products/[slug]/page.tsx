@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductJsonLd } from "@/components/seo/JsonLd";
+import { RichContent } from "@/components/content/RichContent";
+import { plainTextPreview } from "@/lib/sanitize-html";
 import { buttonVariants } from "@/components/ui/button";
 import { getProductBySlug, getPublishedProducts } from "@/lib/queries";
 import { SITE, whatsappUrl } from "@/lib/site";
@@ -18,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!product) return { title: "Product not found" };
 
   const title = product.metaTitle || product.name;
-  const description = product.metaDescription || product.description.slice(0, 160);
+  const description = product.metaDescription || plainTextPreview(product.description, 160);
 
   return {
     title,
@@ -62,13 +64,14 @@ export default async function ProductDetailPage({ params }: Props) {
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">{SITE.name}</p>
             <h1 className="mt-3 font-display text-4xl text-ink sm:text-5xl">{product.name}</h1>
-            <p className="mt-6 text-base leading-relaxed text-muted">{product.description}</p>
+            <RichContent content={product.description} className="mt-6 text-base leading-relaxed text-muted" />
             {product.usageInstructions && (
               <div className="mt-8 rounded-2xl border border-border bg-card p-6">
                 <h2 className="font-display text-2xl text-ink">How to use</h2>
-                <p className="mt-3 text-sm leading-relaxed text-muted">
-                  {product.usageInstructions}
-                </p>
+                <RichContent
+                  content={product.usageInstructions}
+                  className="mt-3 text-sm leading-relaxed text-muted"
+                />
               </div>
             )}
             <div className="mt-8 flex flex-wrap gap-3">

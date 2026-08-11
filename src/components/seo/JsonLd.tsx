@@ -1,4 +1,5 @@
 import { SITE } from "@/lib/site";
+import { absoluteMediaUrl } from "@/lib/media-url";
 
 export function OrganizationJsonLd() {
   const data = {
@@ -35,7 +36,7 @@ export function ProductJsonLd({
     "@type": "Product",
     name,
     description,
-    image: image ? `${SITE.url}${image}` : undefined,
+    image: absoluteMediaUrl(image),
     brand: { "@type": "Brand", name: SITE.name },
     url: `${SITE.url}/products/${slug}`,
   };
@@ -67,7 +68,7 @@ export function BlogPostingJsonLd({
     headline: title,
     description,
     datePublished: new Date(publishedAt).toISOString(),
-    image: image ? `${SITE.url}${image}` : undefined,
+    image: absoluteMediaUrl(image),
     author: { "@type": "Organization", name: SITE.legalName },
     publisher: { "@type": "Organization", name: SITE.legalName },
     mainEntityOfPage: `${SITE.url}/blog/${slug}`,
