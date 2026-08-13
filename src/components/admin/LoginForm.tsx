@@ -34,7 +34,7 @@ export function LoginForm() {
     >
       <div className="flex flex-col items-center text-center">
         <BrandLogo height={64} className="mb-4" />
-        <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">Admin</p>
+        <p className="text-xs uppercase tracking-[0.25em] text-muted">Admin</p>
         <h1 className="mt-2 font-display text-3xl">Sign in</h1>
       </div>
       {state?.error && <p className="text-sm text-danger">{state.error}</p>}

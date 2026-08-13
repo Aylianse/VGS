@@ -46,8 +46,8 @@ export function AdminRecordList<T extends { id: string }>({
               className={cn(
                 "w-full rounded-2xl border p-4 text-left transition-colors",
                 selectedId === item.id
-                  ? "border-rose bg-blush/20"
-                  : "border-border bg-card hover:border-rose/40 hover:bg-blush/10",
+                  ? "border-ink bg-zinc-50"
+                  : "border-border bg-card hover:border-zinc-300 hover:bg-zinc-50",
               )}
             >
               <p className="font-medium text-ink">{renderTitle(item)}</p>

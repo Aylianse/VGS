@@ -76,7 +76,7 @@ export function ImageUploadField({
             disabled={uploading}
             onChange={onFileSelected}
           />
-          <span className="inline-flex h-9 items-center rounded-full border border-border bg-cream px-4 text-sm hover:bg-blush/40">
+          <span className="inline-flex h-9 items-center rounded-full border border-border bg-cream px-4 text-sm hover:bg-zinc-100">
             {uploading ? "Uploading…" : "Upload to Cloudinary"}
           </span>
         </label>

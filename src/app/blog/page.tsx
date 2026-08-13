@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { plainTextPreview } from "@/lib/sanitize-html";
 import { getPublishedPosts } from "@/lib/queries";
 import { buildPageMetadata } from "@/lib/seo";
 import { SITE } from "@/lib/site";
@@ -19,7 +20,7 @@ export default async function BlogPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-16">
-      <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">Journal</p>
+      <p className="text-xs uppercase tracking-[0.25em] text-muted">Journal</p>
       <h1 className="mt-3 font-display text-5xl text-ink">Blog</h1>
       <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post) => (
@@ -27,7 +28,7 @@ export default async function BlogPage() {
             key={post.id}
             className="overflow-hidden rounded-[1.5rem] border border-border bg-card"
           >
-            <Link href={`/blog/${post.slug}`} className="relative block aspect-[16/10] bg-blush/20">
+            <Link href={`/blog/${post.slug}`} className="relative block aspect-[16/10] bg-zinc-50">
               {post.coverImageUrl && (
                 <Image
                   src={post.coverImageUrl}
@@ -47,11 +48,13 @@ export default async function BlogPage() {
                 })}
               </time>
               <h2 className="mt-2 font-display text-2xl">
-                <Link href={`/blog/${post.slug}`} className="hover:text-rose-deep">
+                <Link href={`/blog/${post.slug}`} className="hover:text-ink">
                   {post.title}
                 </Link>
               </h2>
-              <p className="mt-2 text-sm text-muted">{post.excerpt}</p>
+              <p className="mt-2 line-clamp-3 text-sm text-muted">
+                {plainTextPreview(post.excerpt, 160)}
+              </p>
             </div>
           </article>
         ))}

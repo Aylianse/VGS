@@ -27,7 +27,7 @@ export function HeroCarousel({ slides }: { slides: CarouselSlideView[] }) {
     <section className="grain soft-glow relative overflow-hidden" aria-label="Featured highlights">
       <div className="relative z-[2] mx-auto grid min-h-[78vh] max-w-6xl items-center gap-10 px-4 py-16 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <p className="animate-fade-up text-xs uppercase tracking-[0.28em] text-rose-deep">
+          <p className="animate-fade-up text-xs uppercase tracking-[0.28em] text-muted">
             {SITE.legalName}
           </p>
           <h1 className="animate-fade-up delay-1 mt-4 font-display text-5xl leading-[1.05] text-ink sm:text-6xl lg:text-7xl">
@@ -70,7 +70,7 @@ export function HeroCarousel({ slides }: { slides: CarouselSlideView[] }) {
                     onClick={() => setIndex(i)}
                     className={cn(
                       "h-1.5 rounded-full transition-all",
-                      i === index ? "w-8 bg-rose" : "w-3 bg-border",
+                      i === index ? "w-8 bg-ink" : "w-3 bg-border",
                     )}
                   />
                 ))}
@@ -87,32 +87,25 @@ export function HeroCarousel({ slides }: { slides: CarouselSlideView[] }) {
           )}
         </div>
 
-        <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden rounded-[2.5rem] border border-border bg-cream shadow-2xl shadow-rose/10">
+        <div className="product-image-frame relative mx-auto aspect-square w-full max-w-lg overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
           {slide.imageUrl ? (
             <Image
               src={slide.imageUrl}
               alt={slide.imageAlt || slide.title}
               fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 90vw, 420px"
+              className="object-contain p-1"
+              sizes="(max-width: 1024px) 90vw, 480px"
               priority={index === 0}
             />
           ) : (
-            <>
-              <div className="absolute inset-0 bg-gradient-to-br from-blush via-cream to-gold/30" />
-              <div className="absolute inset-4 rounded-[2rem] border border-white/50 bg-white/40 backdrop-blur-sm" />
-              <div className="absolute inset-0 flex items-center justify-center p-10 text-center">
-                <div>
-                  <p className="font-display text-4xl text-ink sm:text-5xl">{SITE.name}</p>
-                  <p className="mt-3 text-sm uppercase tracking-[0.25em] text-rose-deep">
-                    Night Cream Collection
-                  </p>
-                  <p className="mx-auto mt-6 max-w-xs text-sm leading-relaxed text-muted">
-                    Fair. Pink. Naturally luminous — formulas with Glutathione, Vitamin C & botanicals.
-                  </p>
-                </div>
+            <div className="absolute inset-0 flex items-center justify-center p-8 text-center">
+              <div>
+                <p className="font-display text-4xl text-ink sm:text-5xl">{SITE.name}</p>
+                <p className="mt-3 text-sm uppercase tracking-[0.25em] text-muted">
+                  Night Cream Collection
+                </p>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

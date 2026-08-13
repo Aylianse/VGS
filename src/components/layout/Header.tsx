@@ -15,11 +15,11 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50">
-      <div className="bg-ink text-ivory">
+      <div className="border-b border-border bg-cream text-ink">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2 text-xs sm:text-sm">
-          <p className="truncate opacity-90">Official Vita Glow Products — verify authenticity</p>
+          <p className="truncate text-muted">Official Vita Glow Products — verify authenticity</p>
           <div className="flex shrink-0 items-center gap-3">
-            <a href={telUrl()} className="inline-flex items-center gap-1.5 hover:text-blush">
+            <a href={telUrl()} className="inline-flex items-center gap-1.5 text-ink hover:text-muted">
               <Phone className="size-3.5" />
               <span className="hidden sm:inline">Call Now</span>
             </a>
@@ -27,7 +27,7 @@ export function Header() {
               href={whatsappUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 hover:text-blush"
+              className="inline-flex items-center gap-1.5 text-ink hover:text-muted"
             >
               WhatsApp
             </a>
@@ -35,7 +35,7 @@ export function Header() {
         </div>
       </div>
 
-      <div className="border-b border-border/80 bg-ivory/90 backdrop-blur-md">
+      <div className="border-b border-border bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
           <BrandLogo showTagline priority height={52} />
 
@@ -47,7 +47,7 @@ export function Header() {
                 className={cn(
                   "rounded-full px-3 py-2 text-sm transition",
                   pathname === link.href
-                    ? "bg-blush/60 text-rose-deep"
+                    ? "bg-zinc-100 text-ink"
                     : "text-ink/80 hover:bg-cream hover:text-ink",
                 )}
               >
@@ -85,7 +85,7 @@ export function Header() {
                   onClick={() => setOpen(false)}
                   className={cn(
                     "rounded-xl px-3 py-3 text-sm",
-                    pathname === link.href ? "bg-blush/50 text-rose-deep" : "hover:bg-cream",
+                    pathname === link.href ? "bg-zinc-100 text-ink" : "hover:bg-cream",
                   )}
                 >
                   {link.label}
@@ -94,7 +94,7 @@ export function Header() {
               <Link
                 href="/verify"
                 onClick={() => setOpen(false)}
-                className="rounded-xl bg-rose px-3 py-3 text-center text-sm text-white"
+                className="rounded-xl bg-ink px-3 py-3 text-center text-sm text-white"
               >
                 Verify Product
               </Link>

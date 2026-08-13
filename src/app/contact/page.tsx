@@ -13,14 +13,14 @@ export default function ContactPage() {
   return (
     <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 lg:grid-cols-2">
       <div>
-        <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">Get in touch</p>
+        <p className="text-xs uppercase tracking-[0.25em] text-muted">Get in touch</p>
         <h1 className="mt-3 font-display text-5xl text-ink">Contact Us</h1>
         <p className="mt-4 text-muted">
           Questions about products, authenticity, or orders? Reach us anytime.
         </p>
         <ul className="mt-8 space-y-3 text-sm">
           <li>
-            <a href={`mailto:${SITE.email}`} className="text-rose-deep hover:underline">
+            <a href={`mailto:${SITE.email}`} className="text-ink hover:underline">
               {SITE.email}
             </a>
           </li>

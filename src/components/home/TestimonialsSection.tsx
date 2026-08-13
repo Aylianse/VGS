@@ -33,7 +33,7 @@ export function TestimonialsSection({
     <section className="mx-auto max-w-6xl px-4 py-20">
       <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">Testimonials</p>
+          <p className="text-xs uppercase tracking-[0.25em] text-muted">Testimonials</p>
           <h2 className="mt-3 font-display text-4xl text-ink">Loved by real customers</h2>
         </div>
         <Link href="/reviews" className={cn(buttonVariants({ variant: "outline" }))}>
@@ -47,7 +47,7 @@ export function TestimonialsSection({
             className="rounded-[1.5rem] border border-border bg-card p-6 shadow-sm"
           >
             <p className="text-sm leading-relaxed text-ink/80">&ldquo;{item.body}&rdquo;</p>
-            <footer className="mt-5 font-display text-lg text-rose-deep">
+            <footer className="mt-5 font-display text-lg text-ink">
               {item.author}
             </footer>
           </blockquote>

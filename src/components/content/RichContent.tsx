@@ -12,14 +12,14 @@ export function RichContent({ content, className = "" }: RichContentProps) {
     const safe = sanitizeHtml(content);
     return (
       <div
-        className={`rich-content ${className}`.trim()}
+        className={`lexical-content ${className}`.trim()}
         dangerouslySetInnerHTML={{ __html: safe }}
       />
     );
   }
 
   return (
-    <div className={className}>
+    <div className={`lexical-content ${className}`.trim()}>
       {content.split("\n\n").map((paragraph) => (
         <p key={paragraph.slice(0, 48)}>{paragraph}</p>
       ))}

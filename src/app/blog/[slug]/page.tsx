@@ -72,7 +72,7 @@ export default async function BlogPostPage({ params }: Props) {
         )}
         <RichContent
           content={post.body}
-          className="prose-vita mt-10 space-y-5 text-base leading-relaxed text-ink/85"
+          className="mt-10 text-base leading-relaxed text-ink/85"
         />
       </article>
     </>

@@ -8,7 +8,7 @@ export function Input({
   return (
     <input
       className={cn(
-        "flex h-11 w-full rounded-xl border border-border bg-card px-4 text-sm text-ink placeholder:text-muted outline-none transition focus:border-rose/40 focus:ring-2 focus:ring-rose/15",
+        "flex h-11 w-full rounded-xl border border-border bg-card px-4 text-sm text-ink placeholder:text-muted outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200",
         className,
       )}
       {...props}
@@ -23,7 +23,7 @@ export function Textarea({
   return (
     <textarea
       className={cn(
-        "flex min-h-32 w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-ink placeholder:text-muted outline-none transition focus:border-rose/40 focus:ring-2 focus:ring-rose/15",
+        "flex min-h-32 w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-ink placeholder:text-muted outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200",
         className,
       )}
       {...props}
