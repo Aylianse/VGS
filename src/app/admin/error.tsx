@@ -16,7 +16,7 @@ export default function AdminError({
       <button
         type="button"
         onClick={() => reset()}
-        className="rounded-full bg-rose px-5 py-2 text-sm text-white"
+        className="rounded-full bg-ink px-5 py-2 text-sm text-white"
       >
         Try again
       </button>

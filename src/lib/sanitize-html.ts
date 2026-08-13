@@ -1,23 +1,62 @@
 import sanitizeHtmlLib from "sanitize-html";
 
+/** Tags Lexical / rich CMS output may include */
 const allowedTags = [
-  ...sanitizeHtmlLib.defaults.allowedTags,
-  "img",
   "h1",
   "h2",
   "h3",
+  "h4",
+  "h5",
+  "h6",
+  "p",
+  "br",
+  "hr",
   "blockquote",
+  "ul",
+  "ol",
+  "li",
+  "a",
+  "strong",
+  "b",
+  "em",
+  "i",
+  "u",
+  "s",
+  "del",
+  "sub",
+  "sup",
+  "code",
+  "pre",
+  "span",
+  "div",
+  "img",
+  "table",
+  "thead",
+  "tbody",
+  "tfoot",
+  "tr",
+  "th",
+  "td",
+  "figure",
+  "figcaption",
 ];
 
 export function sanitizeHtml(html: string) {
   return sanitizeHtmlLib(html, {
     allowedTags,
     allowedAttributes: {
-      ...sanitizeHtmlLib.defaults.allowedAttributes,
       a: ["href", "name", "target", "rel"],
       img: ["src", "alt", "title", "width", "height"],
+      li: ["role", "aria-checked", "value"],
+      th: ["colspan", "rowspan", "scope"],
+      td: ["colspan", "rowspan"],
+      "*": ["class"],
     },
     allowedSchemes: ["http", "https", "mailto"],
+    transformTags: {
+      b: "strong",
+      i: "em",
+    },
   });
 }
 

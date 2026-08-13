@@ -72,7 +72,7 @@ export function ContactForm() {
           href={whatsappUrl()}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-rose-deep underline"
+          className="text-ink underline"
         >
           chat on WhatsApp
         </a>

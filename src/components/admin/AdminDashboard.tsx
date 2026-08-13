@@ -45,7 +45,7 @@ export function AdminDashboard({
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-border bg-card/80 p-6 shadow-sm">
         <div>
-          <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">Dashboard</p>
+          <p className="text-xs uppercase tracking-[0.25em] text-muted">Dashboard</p>
           <h1 className="font-display text-4xl">Admin</h1>
           <p className="text-sm text-muted">{email}</p>
         </div>
@@ -63,7 +63,7 @@ export function AdminDashboard({
             type="button"
             onClick={() => switchTab(item.id)}
             className={`rounded-full px-4 py-2 text-sm transition-colors ${
-              tab === item.id ? "bg-rose text-white" : "bg-cream text-ink hover:bg-blush/40"
+              tab === item.id ? "bg-ink text-white" : "bg-cream text-ink hover:bg-zinc-100"
             }`}
           >
             {item.label}

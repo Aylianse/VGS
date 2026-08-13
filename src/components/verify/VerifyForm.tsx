@@ -115,7 +115,7 @@ export function VerifyForm() {
                 href={whatsappUrl("Hi, I need help verifying my Vita Glow product.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-4 inline-block text-sm text-rose-deep underline"
+                className="mt-4 inline-block text-sm text-ink underline"
               >
                 Need help? WhatsApp us
               </a>

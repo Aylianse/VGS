@@ -56,18 +56,18 @@ export default async function ProductDetailPage({ params }: Props) {
       />
       <article className="mx-auto max-w-6xl px-4 py-16">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
-          <div className="relative aspect-square overflow-hidden rounded-[2rem] border border-border bg-cream">
+          <div className="product-image-frame relative aspect-square overflow-hidden rounded-2xl border border-border bg-white lg:sticky lg:top-28">
             <Image
               src={image}
               alt={product.name}
               fill
-              className="object-contain p-10"
+              className="object-contain p-1 sm:p-2"
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />
           </div>
           <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-rose-deep">{SITE.name}</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-muted">{SITE.name}</p>
             <h1 className="mt-3 font-display text-4xl text-ink sm:text-5xl">{product.name}</h1>
             <RichContent content={product.description} className="mt-6 text-base leading-relaxed text-muted" />
             {product.usageInstructions && (
@@ -99,15 +99,27 @@ export default async function ProductDetailPage({ params }: Props) {
           <section className="mt-20">
             <h2 className="font-display text-3xl text-ink">You may also like</h2>
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              {others.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/products/${p.slug}`}
-                  className="rounded-2xl border border-border bg-card p-4 transition hover:border-rose/30"
-                >
-                  <p className="font-display text-lg">{p.name}</p>
-                </Link>
-              ))}
+              {others.map((p) => {
+                const thumb = p.imageUrls[0] || "/products/placeholder.svg";
+                return (
+                  <Link
+                    key={p.id}
+                    href={`/products/${p.slug}`}
+                    className="overflow-hidden rounded-2xl border border-border bg-white transition hover:shadow-md"
+                  >
+                    <div className="relative aspect-square overflow-hidden bg-zinc-100">
+                      <Image
+                        src={thumb}
+                        alt={p.name}
+                        fill
+                        className="object-cover"
+                        sizes="200px"
+                      />
+                    </div>
+                    <p className="border-t border-border p-3 font-display text-base">{p.name}</p>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}
