@@ -16,7 +16,14 @@ import { generateVerificationCode } from "@/lib/codes";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/utils";
 
-export type ActionResult = { error?: string; success?: boolean };
+export type ActionResult = { error?: string; success?: boolean; published?: boolean };
+
+function revalidateProductSitePaths(slug?: string | null) {
+  revalidatePath("/");
+  revalidatePath("/products");
+  revalidatePath("/admin");
+  if (slug) revalidatePath(`/products/${slug}`);
+}
 
 export async function loginFormAction(
   _prevState: ActionResult | undefined,
@@ -104,14 +111,20 @@ export async function saveProductAction(formData: FormData): Promise<ActionResul
     };
 
     if (id) {
+      const existing = await prisma.product.findUnique({
+        where: { id },
+        select: { slug: true },
+      });
       await prisma.product.update({ where: { id }, data });
+      revalidateProductSitePaths(slug);
+      if (existing && existing.slug !== slug) {
+        revalidatePath(`/products/${existing.slug}`);
+      }
     } else {
       await prisma.product.create({ data });
+      revalidateProductSitePaths(slug);
     }
 
-    revalidatePath("/");
-    revalidatePath("/products");
-    revalidatePath("/admin");
     return { success: true };
   } catch (error) {
     if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
@@ -120,15 +133,45 @@ export async function saveProductAction(formData: FormData): Promise<ActionResul
   }
 }
 
+export async function toggleProductPublishedAction(formData: FormData): Promise<ActionResult> {
+  try {
+    await requireAdmin();
+
+    const id = String(formData.get("id") || "");
+    if (!id) return { error: "Missing id" };
+
+    const product = await prisma.product.findUnique({
+      where: { id },
+      select: { published: true, slug: true },
+    });
+    if (!product) return { error: "Product not found" };
+
+    const published = !product.published;
+    await prisma.product.update({
+      where: { id },
+      data: { published },
+    });
+
+    revalidateProductSitePaths(product.slug);
+    return { success: true, published };
+  } catch (error) {
+    if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };
+    console.error("toggleProductPublishedAction:", error);
+    return { error: "Could not update product visibility." };
+  }
+}
+
 export async function deleteProductAction(formData: FormData): Promise<ActionResult> {
   try {
     await requireAdmin();
     const id = String(formData.get("id") || "");
     if (!id) return { error: "Missing id" };
+    const existing = await prisma.product.findUnique({
+      where: { id },
+      select: { slug: true },
+    });
     await prisma.product.delete({ where: { id } });
-    revalidatePath("/");
-    revalidatePath("/products");
-    revalidatePath("/admin");
+    revalidateProductSitePaths(existing?.slug);
     return { success: true };
   } catch (error) {
     if (isUnauthorized(error)) return { error: "Session expired. Please log in again." };

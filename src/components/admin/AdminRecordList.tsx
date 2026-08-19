@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -10,6 +11,7 @@ type AdminRecordListProps<T extends { id: string }> = {
   onNew: () => void;
   renderTitle: (item: T) => string;
   renderSubtitle?: (item: T) => string;
+  renderBadge?: (item: T) => ReactNode;
   emptyLabel?: string;
   newLabel?: string;
 };
@@ -21,6 +23,7 @@ export function AdminRecordList<T extends { id: string }>({
   onNew,
   renderTitle,
   renderSubtitle,
+  renderBadge,
   emptyLabel = "No items yet.",
   newLabel = "New item",
 }: AdminRecordListProps<T>) {
@@ -50,7 +53,10 @@ export function AdminRecordList<T extends { id: string }>({
                   : "border-border bg-card hover:border-zinc-300 hover:bg-zinc-50",
               )}
             >
-              <p className="font-medium text-ink">{renderTitle(item)}</p>
+              <div className="flex items-start justify-between gap-2">
+                <p className="font-medium text-ink">{renderTitle(item)}</p>
+                {renderBadge?.(item)}
+              </div>
               {renderSubtitle && <p className="mt-1 text-xs text-muted">{renderSubtitle(item)}</p>}
             </button>
           ))}

@@ -2,17 +2,21 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import {
   deleteProductAction,
   saveProductAction,
+  toggleProductPublishedAction,
 } from "@/lib/actions/admin";
 import type { AdminProduct } from "@/lib/admin-types";
 import { AdminRecordList } from "@/components/admin/AdminRecordList";
+import { PublishStatusBadge } from "@/components/admin/PublishStatusBadge";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { LexicalEditorField } from "@/components/admin/LexicalEditorField";
 import { Button } from "@/components/ui/button";
 import { Input, Label, Textarea } from "@/components/ui/input";
 import { runAdminAction } from "@/components/admin/admin-form-utils";
+import { cn } from "@/lib/utils";
 
 export function ProductAdminPanel({ products }: { products: AdminProduct[] }) {
   const router = useRouter();
@@ -21,6 +25,23 @@ export function ProductAdminPanel({ products }: { products: AdminProduct[] }) {
 
   function startNew() {
     setSelected(null);
+  }
+
+  function toggleVisibility() {
+    if (!selected) return;
+
+    const formData = new FormData();
+    formData.set("id", selected.id);
+    const willPublish = !selected.published;
+
+    runAdminAction(
+      toggleProductPublishedAction,
+      formData,
+      startTransition,
+      router,
+      willPublish ? "Product is now live on the website" : "Product hidden from the website",
+      () => setSelected((prev) => (prev ? { ...prev, published: willPublish } : null)),
+    );
   }
 
   return (
@@ -34,9 +55,16 @@ export function ProductAdminPanel({ products }: { products: AdminProduct[] }) {
       >
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border pb-4">
           <div>
-            <h2 className="font-display text-2xl">{selected ? "Edit product" : "New product"}</h2>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="font-display text-2xl">{selected ? "Edit product" : "New product"}</h2>
+              {selected && <PublishStatusBadge published={selected.published} />}
+            </div>
             <p className="mt-1 text-sm text-muted">
-              {selected ? `Updating ${selected.name}` : "Create a product with rich description and Cloudinary image."}
+              {selected
+                ? selected.published
+                  ? "This product is visible on the home page, products page, and its detail page."
+                  : "This product is saved but hidden from the public website."
+                : "Create a product with rich description and Cloudinary image."}
             </p>
           </div>
           {selected && (
@@ -45,6 +73,48 @@ export function ProductAdminPanel({ products }: { products: AdminProduct[] }) {
             </Button>
           )}
         </div>
+
+        {selected && (
+          <div
+            className={cn(
+              "flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-3",
+              selected.published
+                ? "border-success/30 bg-success/5"
+                : "border-amber-500/30 bg-amber-500/5",
+            )}
+          >
+            <div>
+              <p className="text-sm font-medium text-ink">
+                {selected.published ? "Published on website" : "Unpublished (draft)"}
+              </p>
+              <p className="text-xs text-muted">
+                {selected.published
+                  ? "Visitors can browse and open this product."
+                  : "Only you can see this in admin until you publish again."}
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant={selected.published ? "outline" : "primary"}
+              size="sm"
+              disabled={pending}
+              onClick={toggleVisibility}
+              className="shrink-0"
+            >
+              {selected.published ? (
+                <>
+                  <EyeOff className="size-4" />
+                  Unpublish
+                </>
+              ) : (
+                <>
+                  <Eye className="size-4" />
+                  Publish
+                </>
+              )}
+            </Button>
+          </div>
+        )}
 
         {selected && <input type="hidden" name="id" value={selected.id} />}
 
@@ -106,9 +176,19 @@ export function ProductAdminPanel({ products }: { products: AdminProduct[] }) {
           />
         </div>
 
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="published" defaultChecked={selected?.published ?? true} />
-          Published
+        <label className="flex items-start gap-2 rounded-xl border border-border bg-cream/50 p-3 text-sm">
+          <input
+            type="checkbox"
+            name="published"
+            className="mt-0.5"
+            defaultChecked={selected?.published ?? true}
+          />
+          <span>
+            <span className="font-medium text-ink">Published on website</span>
+            <span className="mt-0.5 block text-muted">
+              Uncheck to save as draft, or use the Publish / Unpublish button above for instant changes.
+            </span>
+          </span>
         </label>
 
         <Button type="submit" disabled={pending}>
@@ -126,6 +206,7 @@ export function ProductAdminPanel({ products }: { products: AdminProduct[] }) {
           emptyLabel="No products yet. Create your first one."
           renderTitle={(item) => item.name}
           renderSubtitle={(item) => item.slug}
+          renderBadge={(item) => <PublishStatusBadge published={item.published} compact />}
         />
         {selected && (
           <form
