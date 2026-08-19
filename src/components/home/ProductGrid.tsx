@@ -115,17 +115,17 @@ export function ProductGrid({
   compact?: boolean;
 }) {
   return (
-    <section id="collection" className="mx-auto max-w-6xl px-4 py-20">
-      <div className="mb-10 max-w-2xl">
+    <section id="collection" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-12 sm:py-20">
+      <div className="mb-8 max-w-2xl sm:mb-10">
         <p className="text-xs uppercase tracking-[0.25em] text-muted">Collection</p>
-        <h2 className="mt-3 font-display text-4xl text-ink sm:text-5xl">{title}</h2>
+        <h2 className="mt-3 font-display text-3xl text-ink sm:text-5xl">{title}</h2>
       </div>
       {products.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-border bg-cream p-10 text-center text-muted">
           Products will appear here once the database is connected and seeded.
         </p>
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} compact={compact} />
           ))}

@@ -8,13 +8,13 @@ import { cn } from "@/lib/utils";
 export function BlogPreview({ posts }: { posts: BlogPost[] }) {
   return (
     <section className="border-t border-border bg-white">
-      <div className="mx-auto max-w-6xl px-4 py-20">
-        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:py-20">
+        <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-muted">Blogs</p>
-            <h2 className="mt-3 font-display text-4xl text-ink">From the journal</h2>
+            <h2 className="mt-3 font-display text-3xl text-ink sm:text-4xl">From the journal</h2>
           </div>
-          <Link href="/blog" className={cn(buttonVariants({ variant: "outline" }))}>
+          <Link href="/blog" className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto")}>
             View more
           </Link>
         </div>
