@@ -12,10 +12,16 @@ import { buttonVariants } from "@/components/ui/button";
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const isHome = pathname === "/";
 
   return (
     <header className="sticky top-0 z-50">
-      <div className="border-b border-border bg-cream text-ink">
+      <div
+        className={cn(
+          "border-b border-border text-ink transition-colors",
+          isHome ? "border-white/30 bg-white/60 backdrop-blur-md" : "bg-cream",
+        )}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2 text-xs sm:text-sm">
           <p className="truncate text-muted">Official Vita Glow Products — verify authenticity</p>
           <div className="flex shrink-0 items-center gap-3">
@@ -35,7 +41,12 @@ export function Header() {
         </div>
       </div>
 
-      <div className="border-b border-border bg-white/95 backdrop-blur-md">
+      <div
+        className={cn(
+          "border-b border-border backdrop-blur-md transition-colors",
+          isHome ? "border-white/30 bg-white/70" : "border-border bg-white/95",
+        )}
+      >
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
           <BrandLogo showTagline priority height={52} />
 

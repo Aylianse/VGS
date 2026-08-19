@@ -115,7 +115,7 @@ export function ProductGrid({
   compact?: boolean;
 }) {
   return (
-    <section className="mx-auto max-w-6xl px-4 py-20">
+    <section id="collection" className="mx-auto max-w-6xl px-4 py-20">
       <div className="mb-10 max-w-2xl">
         <p className="text-xs uppercase tracking-[0.25em] text-muted">Collection</p>
         <h2 className="mt-3 font-display text-4xl text-ink sm:text-5xl">{title}</h2>
