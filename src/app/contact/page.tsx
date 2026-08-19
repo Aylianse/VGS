@@ -11,10 +11,10 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function ContactPage() {
   return (
-    <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 lg:grid-cols-2">
+    <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:gap-12 sm:py-16 lg:grid-cols-2">
       <div>
         <p className="text-xs uppercase tracking-[0.25em] text-muted">Get in touch</p>
-        <h1 className="mt-3 font-display text-5xl text-ink">Contact Us</h1>
+        <h1 className="mt-3 font-display text-3xl text-ink sm:text-5xl">Contact Us</h1>
         <p className="mt-4 text-muted">
           Questions about products, authenticity, or orders? Reach us anytime.
         </p>

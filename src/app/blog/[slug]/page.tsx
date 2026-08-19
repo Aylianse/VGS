@@ -48,7 +48,7 @@ export default async function BlogPostPage({ params }: Props) {
         publishedAt={post.publishedAt}
         image={post.coverImageUrl}
       />
-      <article className="mx-auto max-w-3xl px-4 py-16">
+      <article className="mx-auto max-w-3xl px-4 py-10 sm:py-16">
         <time className="text-xs uppercase tracking-wider text-muted">
           {new Date(post.publishedAt).toLocaleDateString("en-US", {
             month: "long",

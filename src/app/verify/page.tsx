@@ -13,9 +13,9 @@ export const metadata: Metadata = buildPageMetadata({
 export default function VerifyPage() {
   return (
     <div className="soft-glow">
-      <div className="mx-auto max-w-3xl px-4 py-16 text-center">
+      <div className="mx-auto max-w-3xl px-4 py-10 text-center sm:py-16">
         <p className="text-xs uppercase tracking-[0.25em] text-muted">Authenticity</p>
-        <h1 className="mt-3 font-display text-5xl text-ink">Verify your product</h1>
+        <h1 className="mt-3 font-display text-3xl text-ink sm:text-5xl">Verify your product</h1>
         <p className="mx-auto mt-4 max-w-xl text-muted">
           Find the unique code on your Vita Glow packaging and enter it below. Genuine
           products confirm instantly.

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export function Footer() {
   return (
     <footer className="mt-auto border-t border-border bg-cream text-ink">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:gap-10 sm:py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <BrandLogo height={56} />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted">{SITE.description}</p>

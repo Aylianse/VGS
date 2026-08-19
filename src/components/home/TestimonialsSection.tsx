@@ -30,13 +30,13 @@ export function TestimonialsSection({
         ];
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-20">
-      <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+    <section className="mx-auto max-w-6xl px-4 py-12 sm:py-20">
+      <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-muted">Testimonials</p>
-          <h2 className="mt-3 font-display text-4xl text-ink">Loved by real customers</h2>
+          <h2 className="mt-3 font-display text-3xl text-ink sm:text-4xl">Loved by real customers</h2>
         </div>
-        <Link href="/reviews" className={cn(buttonVariants({ variant: "outline" }))}>
+        <Link href="/reviews" className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto")}>
           All reviews
         </Link>
       </div>
