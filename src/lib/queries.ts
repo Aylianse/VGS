@@ -1,5 +1,46 @@
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 import type { CarouselSlideView } from "@/lib/admin-types";
+
+const productListSelect = {
+  id: true,
+  name: true,
+  slug: true,
+  description: true,
+  imageUrls: true,
+  sortOrder: true,
+  published: true,
+} satisfies Prisma.ProductSelect;
+
+const relatedProductSelect = {
+  id: true,
+  name: true,
+  slug: true,
+  imageUrls: true,
+} satisfies Prisma.ProductSelect;
+
+const blogPostListSelect = {
+  id: true,
+  title: true,
+  slug: true,
+  excerpt: true,
+  coverImageUrl: true,
+  publishedAt: true,
+  published: true,
+} satisfies Prisma.BlogPostSelect;
+
+const testimonialListSelect = {
+  id: true,
+  author: true,
+  body: true,
+  sortOrder: true,
+  published: true,
+} satisfies Prisma.TestimonialSelect;
+
+export type ProductListItem = Prisma.ProductGetPayload<{ select: typeof productListSelect }>;
+export type RelatedProductItem = Prisma.ProductGetPayload<{ select: typeof relatedProductSelect }>;
+export type BlogPostListItem = Prisma.BlogPostGetPayload<{ select: typeof blogPostListSelect }>;
+export type TestimonialListItem = Prisma.TestimonialGetPayload<{ select: typeof testimonialListSelect }>;
 
 const DEFAULT_CAROUSEL_SLIDES: CarouselSlideView[] = [
   {
@@ -56,38 +97,25 @@ export async function getPublishedCarouselSlides(): Promise<CarouselSlideView[]>
   }
 }
 
-export async function getPublishedProducts() {
+export async function getPublishedProducts(): Promise<ProductListItem[]> {
   try {
     return await prisma.product.findMany({
       where: { published: true },
       orderBy: { sortOrder: "asc" },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        description: true,
-        imageUrls: true,
-        sortOrder: true,
-        published: true,
-      },
+      select: productListSelect,
     });
   } catch {
     return [];
   }
 }
 
-export async function getRelatedProducts(excludeId: string, limit = 3) {
+export async function getRelatedProducts(excludeId: string, limit = 3): Promise<RelatedProductItem[]> {
   try {
     return await prisma.product.findMany({
       where: { published: true, id: { not: excludeId } },
       orderBy: { sortOrder: "asc" },
       take: limit,
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        imageUrls: true,
-      },
+      select: relatedProductSelect,
     });
   } catch {
     return [];
@@ -104,21 +132,13 @@ export async function getProductBySlug(slug: string) {
   }
 }
 
-export async function getPublishedPosts(limit?: number) {
+export async function getPublishedPosts(limit?: number): Promise<BlogPostListItem[]> {
   try {
     return await prisma.blogPost.findMany({
       where: { published: true },
       orderBy: { publishedAt: "desc" },
       take: limit,
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        excerpt: true,
-        coverImageUrl: true,
-        publishedAt: true,
-        published: true,
-      },
+      select: blogPostListSelect,
     });
   } catch {
     return [];
@@ -135,18 +155,12 @@ export async function getPostBySlug(slug: string) {
   }
 }
 
-export async function getPublishedTestimonials() {
+export async function getPublishedTestimonials(): Promise<TestimonialListItem[]> {
   try {
     return await prisma.testimonial.findMany({
       where: { published: true },
       orderBy: { sortOrder: "asc" },
-      select: {
-        id: true,
-        author: true,
-        body: true,
-        sortOrder: true,
-        published: true,
-      },
+      select: testimonialListSelect,
     });
   } catch {
     return [];

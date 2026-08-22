@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { plainTextPreview } from "@/lib/sanitize-html";
-import type { BlogPost } from "@prisma/client";
+import type { BlogPostListItem } from "@/lib/queries";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-export function BlogPreview({ posts }: { posts: BlogPost[] }) {
+export function BlogPreview({ posts }: { posts: BlogPostListItem[] }) {
   return (
     <section className="border-t border-border bg-white">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:py-20">
