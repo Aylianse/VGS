@@ -1,4 +1,4 @@
-import type { Testimonial } from "@prisma/client";
+import type { TestimonialListItem } from "@/lib/queries";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 export function TestimonialsSection({
   testimonials,
 }: {
-  testimonials: Testimonial[];
+  testimonials: TestimonialListItem[];
 }) {
   const items =
     testimonials.length > 0

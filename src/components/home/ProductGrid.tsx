@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Product } from "@prisma/client";
+import type { ProductListItem } from "@/lib/queries";
 import { plainTextPreview } from "@/lib/sanitize-html";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -47,7 +47,7 @@ export function ProductCard({
   product,
   compact = false,
 }: {
-  product: Product;
+  product: ProductListItem;
   compact?: boolean;
 }) {
   const image = product.imageUrls[0] || "/products/placeholder.svg";
@@ -110,7 +110,7 @@ export function ProductGrid({
   title = "Our Products",
   compact = false,
 }: {
-  products: Product[];
+  products: ProductListItem[];
   title?: string;
   compact?: boolean;
 }) {
