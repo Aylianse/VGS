@@ -16,7 +16,7 @@ import { buildHomeMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildHomeMetadata();
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function HomePage() {
   const [slides, products, testimonials, posts] = await Promise.all([

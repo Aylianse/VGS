@@ -61,6 +61,33 @@ export async function getPublishedProducts() {
     return await prisma.product.findMany({
       where: { published: true },
       orderBy: { sortOrder: "asc" },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        imageUrls: true,
+        sortOrder: true,
+        published: true,
+      },
+    });
+  } catch {
+    return [];
+  }
+}
+
+export async function getRelatedProducts(excludeId: string, limit = 3) {
+  try {
+    return await prisma.product.findMany({
+      where: { published: true, id: { not: excludeId } },
+      orderBy: { sortOrder: "asc" },
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        imageUrls: true,
+      },
     });
   } catch {
     return [];
@@ -83,6 +110,15 @@ export async function getPublishedPosts(limit?: number) {
       where: { published: true },
       orderBy: { publishedAt: "desc" },
       take: limit,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        excerpt: true,
+        coverImageUrl: true,
+        publishedAt: true,
+        published: true,
+      },
     });
   } catch {
     return [];
@@ -104,6 +140,13 @@ export async function getPublishedTestimonials() {
     return await prisma.testimonial.findMany({
       where: { published: true },
       orderBy: { sortOrder: "asc" },
+      select: {
+        id: true,
+        author: true,
+        body: true,
+        sortOrder: true,
+        published: true,
+      },
     });
   } catch {
     return [];

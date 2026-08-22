@@ -10,7 +10,7 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/products",
 });
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ProductsPage() {
   const products = await getPublishedProducts();

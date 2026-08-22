@@ -7,11 +7,11 @@ import { RichContent } from "@/components/content/RichContent";
 import { plainTextPreview } from "@/lib/sanitize-html";
 import { buildPageMetadata } from "@/lib/seo";
 import { buttonVariants } from "@/components/ui/button";
-import { getProductBySlug, getPublishedProducts } from "@/lib/queries";
+import { getProductBySlug, getRelatedProducts } from "@/lib/queries";
 import { SITE, whatsappUrl } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,7 +36,7 @@ export default async function ProductDetailPage({ params }: Props) {
   const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const others = (await getPublishedProducts()).filter((p) => p.id !== product.id).slice(0, 3);
+  const others = await getRelatedProducts(product.id, 3);
   const image = product.imageUrls[0] || "/products/placeholder.svg";
 
   return (
