@@ -2,7 +2,6 @@ import type { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
 import { absoluteUrl } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 type SitemapEntry = MetadataRoute.Sitemap[number];

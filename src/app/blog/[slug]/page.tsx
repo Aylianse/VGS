@@ -6,7 +6,7 @@ import { RichContent } from "@/components/content/RichContent";
 import { getPostBySlug } from "@/lib/queries";
 import { buildPageMetadata } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 type Props = { params: Promise<{ slug: string }> };
 
