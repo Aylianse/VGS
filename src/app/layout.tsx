@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Outfit } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MobileVerifyBar } from "@/components/layout/MobileVerifyBar";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
 import { AppToaster } from "@/components/ui/toaster";
@@ -62,8 +63,9 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <OrganizationJsonLd />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-[calc(4.75rem+env(safe-area-inset-bottom))] sm:pb-0">{children}</main>
         <Footer />
+        <MobileVerifyBar />
         <WhatsAppButton />
         <AppToaster />
       </body>

@@ -79,10 +79,7 @@ export function Header() {
           </nav>
 
           <div className="flex shrink-0 items-center gap-2">
-            <Link
-              href="/verify"
-              className={cn(buttonVariants({ size: "sm" }), "hidden sm:inline-flex")}
-            >
+            <Link href="/verify" className={cn(buttonVariants({ size: "sm" }), "inline-flex shrink-0")}>
               <ShieldCheck className="size-4" />
               Verify
             </Link>
